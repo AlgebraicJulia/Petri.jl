@@ -1,0 +1,12 @@
+language: julia
+sudo: false
+os:
+  - linux
+
+julia:
+  - 1.0
+  - 1.1
+  - nightly
+
+allow_failures:
+ - julia: nightly

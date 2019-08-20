@@ -1,0 +1,10 @@
+name = "Petri"
+uuid = "b9ab1082-732d-4069-bf60-b5f45911ba5f"
+version = "0.0.1"
+
+[deps]
+MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
+ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
+
+[compat]
+julia = "1.0"
