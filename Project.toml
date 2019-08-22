@@ -1,6 +1,6 @@
 name = "Petri"
-uuid = "b9ab1082-732d-4069-bf60-b5f45911ba5f"
-version = "0.0.1"
+uuid = "4259d249-1051-49fa-8328-3f8ab9391c33"
+version = "0.1.0"
 
 [deps]
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
