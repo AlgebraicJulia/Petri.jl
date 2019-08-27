@@ -1,5 +1,6 @@
 name = "Petri"
 uuid = "4259d249-1051-49fa-8328-3f8ab9391c33"
+authors = ["Micah Halter <micah.halter@gtri.gatech.edu>"]
 version = "0.1.0"
 
 [deps]
