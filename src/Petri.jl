@@ -11,8 +11,9 @@ using ModelingToolkit
 import ModelingToolkit: Constant, Variable
 using MacroTools
 import MacroTools: postwalk
+import Base: eval
 
-export Model, solve, eval, funckit
+export Model, solve, funckit
 
 """ Model{G,S,D,L,P}
 
@@ -133,7 +134,7 @@ end
 
 evaluate all functions of petri model m
 """
-eval(m::Model) = Model(m.g, m.S, eval.(m.Δ), eval.(m.Λ), eval.(m.Φ))
+Base.eval(m::Model) = Model(m.g, m.S, eval.(m.Δ), eval.(m.Λ), eval.(m.Φ))
 
 function step(p::Problem{Model{T,
               Array{Operation,1},
