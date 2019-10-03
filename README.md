@@ -22,6 +22,9 @@ N(x) = sum(x)
 
 The SIR model represents the epidemiological dynamics of an infectious disease that causes immunity in its victims. There are three *states:* `Suceptible ,Infected, Recovered`. These states interact through two *transitions*. Infection has the form `S+I -> 2I` where a susceptible person meets an infected person and results in two infected people. The second transition is recovery `I -> R` where an infected person recovers spontaneously.
 
+
+![The SIR model system shown as a Petri net with ODE formulas](/doc/img/sir_petri+ode.png?raw=true "SIR Model")
+
 ```julia
 # define the structure of the model
 sir = Petri.Model([S,I,R],[(S+I, 2I), (I,R)])
@@ -51,6 +54,8 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 
 Petri Nets are a simple language for describing reaction networks, you can make increasingly complex diseases. For example the `SEIR` model has an `Exposed` phase where people have the disease, but are not infectious yet.
 
+![The SEIR model system shown as a Petri net](/doc/img/seir.png?raw=true "SEIR Model")
+
 ```julia
 seir = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R)])
 u0 = @LArray [100.0, 1, 0, 0] (:S, :E, :I, :R)
@@ -66,6 +71,8 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 
 The previous models have transitory behavior, the infection spreads and then terminates as you end up with no infected people in the population. The following `SEIRS` model has a non-trivial steady state, because recovered people lose their immunity and become susceptible again.
 
+![The SEIRS model system shown as a Petri net](/doc/img/seir.png?raw=true "SEIR Model")
+
 ```julia
 seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])
 u0 = @LArray [100.0, 1, 0, 0] (:S, :E, :I, :R)
@@ -78,3 +85,11 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
 ```
 
 ![A solution to the SEIRS model system](/examples/img/seirs_sol.png?raw=true "SEIRS Solution")
+
+## Goals
+
+`Petri` makes it easy to build complex reaction networks using a simple DSL. This is related to the[DiffeqBiological](https://github.com/JuliaDiffEq/DiffEqBiological.jl "DiffEqBiological") Reaction DSL, but takes a different implementation approach. Instead of building our framework around symbolic algebra and standard chemical notion, we are working off the Applied Category Theory approach to reaction networks [[Baez Pollard, 2017](http://math.ucr.edu/home/baez/RxNet.pdf "baezpollard2017")].
+
+There are operations that are easy to do on the `Petri.Model` like "add a transition from R to S" that require simultaneously changing multiple parts of the algebraic formulation. Applied Category Theory gives a sound theoretical framework for manipulating Petri Nets as a model of chemical reactions. `Petri` is a Julia package primarily intended to investigate how we can operationalize this theory into practical scientific software.
+
+See [SemanticModels.ModelTools](https://github.com/jpfairbanks/SemanticModels.jl/blob/master/src/modeltools/PetriModels.jl "PetriModel") for tools that work with Petri net models and manipulating them with higher level APIs based on ACT.
