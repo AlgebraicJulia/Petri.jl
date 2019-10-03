@@ -71,7 +71,7 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 
 The previous models have transitory behavior, the infection spreads and then terminates as you end up with no infected people in the population. The following `SEIRS` model has a non-trivial steady state, because recovered people lose their immunity and become susceptible again.
 
-![The SEIRS model system shown as a Petri net](/doc/img/seir.png?raw=true "SEIR Model")
+![The SEIRS model system shown as a Petri net](/doc/img/seirs.png?raw=true "SEIR Model")
 
 ```julia
 seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])
