@@ -30,7 +30,7 @@ using Test
         # @test all(Δ1 .== m′.Δ)
         # @test all(Λ1 .== m′.Λ)
 
-        @show m′′ = Petri.evaluate(m′)
+        m′′ = Petri.evaluate(m′)
         u0 = @LArray [100, 1, 0, 0] (:S, :E, :I, :R)
         params = @LArray [0.55/101, 0.15, 0.15, 0.15] (:β, :γ, :μ, :η)
         p = Petri.ParamProblem(m′′, u0, params, 250)

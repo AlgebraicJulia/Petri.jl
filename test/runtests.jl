@@ -39,7 +39,6 @@ p1 = test1()
 
 m = p1.m
 map(m.Λ) do λ
-    @show λ
     body, args = @show Petri.funcbody(λ)
 end
 
@@ -73,13 +72,13 @@ f = Petri.funckit(:f, (:du, :state, :p, :t), quote $(answer...)end )
     seir = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R)])
     seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])
 
-    @show sirf = fluxes(sir)
+    sirf = fluxes(sir)
     @test length(sirf) == 3
 
-    @show seirf = fluxes(seir)
+    seirf = fluxes(seir)
     @test length(seirf) == 4
 
-    @show seirsf = fluxes(seirs)
+    seirsf = fluxes(seirs)
     @test length(seirsf) == 4
 end
 
@@ -98,7 +97,7 @@ N(x) = sum(x)
     u0 = @LArray [100.0, 1, 0] (:S, :I, :R)
     dusir = @LArray [0.0, 0.0, 0.0] (:S, :I, :R)
     p = @LArray [0.35, 0.05] (:μ, :β)
-    @show f(dusir, u0, p, 0.0)
+    f(dusir, u0, p, 0.0)
     @show dusir
 
 
