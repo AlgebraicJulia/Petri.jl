@@ -171,25 +171,4 @@ test_2()
 exprs2 = Δ(Petri.Model([S,I,R], [(2S+I, 3I)]))
 
 
-sir′ = funckit(sir.model)
-m = sir′
-m′ = evaluate(m)
-@show m′
-@show typeof(m′)
-p = Petri.Problem(m′, ParamSIR(100, 1, 0, [0.15, 0.55/101]), 250)
-soln = Petri.solve(p)
-@test soln.S <= 10
-@test soln.S + soln.I + soln.R == 101
-
-m′ = evaluate(funckit(sirs.model))
-@show m′
-@show typeof(m′)
-p = Petri.Problem(m′, ParamSIR(100, 1, 0, [0.15, 0.55/101, 0.15]), 250)
-sirs_soln = Petri.solve(p)
-@test sirs_soln.S >= 10
-@test sirs_soln.S + sirs_soln.I + sirs_soln.R == 101
-@show soln
-@show sirs_soln
-
-m′ = Petri.evaluate(funckit(seirs.model))
 # @code_native m′.Δ[1](ParamSIR(100, 1, 0, [ 0.15, 0.55/101, 0.15, 0.1 ]))
