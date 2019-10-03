@@ -5,6 +5,8 @@ using ModelingToolkit
 using MacroTools
 import MacroTools: postwalk
 
+include("stochastic.jl")
+
 mutable struct SIRState{T,F}
     S::T
     I::T

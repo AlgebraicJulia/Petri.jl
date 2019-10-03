@@ -14,46 +14,10 @@ import MacroTools: postwalk
 import Base: collect
 import Base.Iterators: flatten
 
-export Model, Problem, solve, funckit, evaluate, odefunc
+export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc
 
 
-""" Model{G,S,D,L,P}
-
-Structure for representing the petri net model
-
-represented by grounding, states, transition function, transition rates, and predicates
-"""
-struct Model{G,S,D,L,P}
-  g::G  # grounding
-  S::S  # states
-  Δ::D  # transition function
-  Λ::L  # transition rate
-  Φ::P  # if state should happen
-end
-
-""" Model(s::S, δ::D, λ::L, ϕ::P)
-
-Constructor to initialize a Petri net
-"""
-Model(s::S, δ::D, λ::L, ϕ::P) where {S,D,L,P} = Model{Any,S,D,L,P}(missing, s, δ, λ, ϕ)
-
-""" Model(s::S, δ::D)
-
-Constructor to initialize a Petri net with just states and transition functions
-"""
-Model(s::S, δ::D) where {S<:Vector,D<:Vector{Tuple{Operation, Operation}}} = Model(s, δ, [],[])
-
-""" Problem{M<:Model, S, N}
-
-Structure for representing a petri net problem
-
-represented by a petri net model, initial state, and number of steps
-"""
-struct Problem{M<:Model, S, N}
-  m::M
-  initial::S
-  steps::N
-end
+include("types.jl")
 
 sample(rates) = begin
   s = cumsum(rates)
@@ -103,7 +67,7 @@ end
 
 Evaluate petri net problem and return the final state
 """
-function solve(p::Problem)
+function solve(p::AbstractProblem)
   state = p.initial
   for i in 1:p.steps
     state = step(p, state)
@@ -183,6 +147,27 @@ function step(p::Problem{Model{T,
   p.m.Δ[nexti](state)
   state
 end
+function step(p::ParamProblem{Model{T,
+              Array{Operation,1},
+              Array{Function,1},
+              Array{Function,1},
+              Missing},
+              S, N} where {T,S,N},
+              state)
+  # @show state
+  n = length(p.m.Δ)
+  rates = map(p.m.Λ) do λ
+    λ(state, p.param)
+  end
+  # @show rates
+  nexti = sample(rates)
+  if nexti == nothing
+    return state
+  end
+  # @show nexti
+  p.m.Δ[nexti](state)
+  state
+end
 
 function apply(expr::Equation, data)
   rhs = expr.rhs
@@ -223,8 +208,6 @@ function apply(op::Function, expr::Operation, data)
   return op(anses...)
 end
 
-include("metaprogramming.jl")
-
 function collect(d::Dict, seq)
     for p in seq
         if p[1] in keys(d)
@@ -238,37 +221,8 @@ end
 
 coeffvalue(coeff::ModelingToolkit.Constant) = coeff.value
 coeffvalue(coeff::Any) = coeff
-function fluxes(model)
-    terms = map(enumerate(model.Δ)) do (i, δ)
-        inn, out = δ
-        term = inn
-        if term.op == +
-            term = prod(inn.args)
-        end
-        body, args = Petri.funcbody(term)
-        t = :(param[$i]*$body)
-        deg = length(t.args[3].args)-2
-        t = :($t / N(state)^$(deg))
-        t = simplify(t)
-        outterms = out.op == ( + ) ? out.args : [out]
-        changes = map(outterms) do o
-            p = o.op == ( * ) ? (o.args[2].op,o.args[1]) : (o.op, 1)
-            var, coeff = p[1], coeffvalue(p[2])
-            var=>:($coeff * $t)
-        end
-        innterms = inn.op == ( + ) ? inn.args : [inn]
-        decreases = map(innterms) do o
-            p = o.op == ( * ) ? (o.args[2].op,o.args[1]) : (o.op, 1)
-            var, coeff = p[1], coeffvalue(p[2])
-            var=>:((-1/$coeff) * $t)
-        end
-        return union(changes, decreases)
-    end |> flatten |> s->collect(Dict(), s)
-    [:(du.$(Symbol(k)) = +($(v...))) for (k,v) in terms]
-end
 
-odefunc(m, prefix::Symbol) = funckit(gensym(prefix),
-                                     (:du, :state, :param, :t),
-                                     quotesplat(fluxes(m)))
-
+include("metaprogramming.jl")
+include("stochastic.jl")
+include("ode.jl")
 end #Module
