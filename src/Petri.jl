@@ -11,9 +11,11 @@ using ModelingToolkit
 import ModelingToolkit: Constant, Variable
 using MacroTools
 import MacroTools: postwalk
-import Base: eval
+import Base: collect
+import Base.Iterators: flatten
 
-export Model, solve, funckit
+export Model, Problem, solve, funckit, evaluate, odefunc
+
 
 """ Model{G,S,D,L,P}
 
@@ -130,11 +132,11 @@ function step(p::Problem, state)
   state
 end
 
-""" eval(m::Model)
+""" evaluate(m::Model)
 
 evaluate all functions of petri model m
 """
-Base.eval(m::Model) = Model(m.g, m.S, eval.(m.Δ), eval.(m.Λ), eval.(m.Φ))
+evaluate(m::Model) = Model(m.g, m.S, eval.(m.Δ), eval.(m.Λ), eval.(m.Φ))
 
 function step(p::Problem{Model{T,
               Array{Operation,1},
@@ -160,7 +162,7 @@ function step(p::Problem{Model{T,
   state
 end
 
-function step(p::Petri.Problem{Petri.Model{T,
+function step(p::Problem{Model{T,
               Array{Operation,1},
               Array{Function,1},
               Array{Function,1},
@@ -221,61 +223,52 @@ function apply(op::Function, expr::Operation, data)
   return op(anses...)
 end
 
-function funcbody(ex::Equation, ctx=:state)
-  return ex.lhs.op.name => funcbody(ex.rhs, ctx)
-end
+include("metaprogramming.jl")
 
-function funcbody(ex::Operation, ctx=:state)
-  args = Symbol[]
-  body = postwalk(convert(Expr, ex)) do x
-    # @show x, typeof(x);
-    if typeof(x) == Expr && x.head == :call
-      if length(x.args) == 1
-        var = x.args[1]
-        push!(args, var)
-        return :($ctx.$var)
-      end
+function collect(d::Dict, seq)
+    for p in seq
+        if p[1] in keys(d)
+            push!(d[p[1]], p[2])
+        else
+            d[p[1]] = [p[2]]
+        end
     end
-    return x
-  end
-  return body, Set(args)
+    return d
 end
 
-funckit(fname, args, body) = quote $fname($(collect(args)...)) = $body end
-funckit(fname::Symbol, arg::Symbol, body) = quote $fname($arg) = $body end
-
-""" funckit(p::Petri.Problem, ctx=:state)
-
-Compile petri net problem to native Julia expressions for faster solving
-"""
-function funckit(p::Petri.Problem, ctx=:state)
-  # @show "Λs"
-  λf = map(p.m.Λ) do λ
-    body, args = funcbody(λ, ctx)
-    fname = gensym("λ")
-    q = funckit(fname, ctx, body)
-    return q
-  end
-  # @show "Δs"
-  δf = map(p.m.Δ) do δ
-    q = quote end
-    map(δ) do f
-      vname, vfunc = funcbody(f, ctx)
-      body, args = vfunc
-      qi = :(state.$vname = $body)
-      push!(q.args, qi)
-    end
-    sym = gensym("δ")
-    :($sym(state) = $(q) )
-  end
-
-  # @show "Φs"
-  ϕf = map(p.m.Φ) do ϕ
-    body, args = funcbody(ϕ, ctx)
-    fname = gensym("ϕ")
-    q = funckit(fname, ctx, body)
-  end
-  return Model(p.m.S, δf, λf, ϕf)
+coeffvalue(coeff::ModelingToolkit.Constant) = coeff.value
+coeffvalue(coeff::Any) = coeff
+function fluxes(model)
+    terms = map(enumerate(model.Δ)) do (i, δ)
+        inn, out = δ
+        term = inn
+        if term.op == +
+            term = prod(inn.args)
+        end
+        body, args = Petri.funcbody(term)
+        t = :(param[$i]*$body)
+        deg = length(t.args[3].args)-2
+        t = :($t / N(state)^$(deg))
+        t = simplify(t)
+        outterms = out.op == ( + ) ? out.args : [out]
+        changes = map(outterms) do o
+            p = o.op == ( * ) ? (o.args[2].op,o.args[1]) : (o.op, 1)
+            var, coeff = p[1], coeffvalue(p[2])
+            var=>:($coeff * $t)
+        end
+        innterms = inn.op == ( + ) ? inn.args : [inn]
+        decreases = map(innterms) do o
+            p = o.op == ( * ) ? (o.args[2].op,o.args[1]) : (o.op, 1)
+            var, coeff = p[1], coeffvalue(p[2])
+            var=>:((-1/$coeff) * $t)
+        end
+        return union(changes, decreases)
+    end |> flatten |> s->collect(Dict(), s)
+    [:(du.$(Symbol(k)) = +($(v...))) for (k,v) in terms]
 end
 
-end
+odefunc(m, prefix::Symbol) = funckit(gensym(prefix),
+                                     (:du, :state, :param, :t),
+                                     quotesplat(fluxes(m)))
+
+end #Module
