@@ -46,7 +46,7 @@ sol = DifferentialEquations.solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 ```
 
-![A solution to the SIR model system](/examples/img/sir_sol.svg?raw=true "SIR Solution")
+![A solution to the SIR model system](/examples/img/sir_sol.png?raw=true "SIR Solution")
 
 
 Petri Nets are a simple language for describing reaction networks, you can make increasingly complex diseases. For example the `SEIR` model has an `Exposed` phase where people have the disease, but are not infectious yet.
@@ -62,7 +62,7 @@ sol = DifferentialEquations.solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 ```
 
-![A solution to the SEIR model system](/examples/img/seir_sol.svg?raw=true "SEIR Solution")
+![A solution to the SEIR model system](/examples/img/seir_sol.png?raw=true "SEIR Solution")
 
 The previous models have transitory behavior, the infection spreads and then terminates as you end up with no infected people in the population. The following `SEIRS` model has a non-trivial steady state, because recovered people lose their immunity and become susceptible again.
 
@@ -77,4 +77,4 @@ sol = DifferentialEquations.solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
 ```
 
-![A solution to the SEIRS model system](/examples/img/seirs_sol.svg?raw=true "SEIRS Solution")
+![A solution to the SEIRS model system](/examples/img/seirs_sol.png?raw=true "SEIRS Solution")

@@ -22,7 +22,7 @@ f = eval(fex)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
-savefig(plt, "img/sir_sol.svg")
+savefig(plt, "img/sir_sol.png")
 @test sol[end].S < 1
 @test sol[end].I < 1
 @test sol[end].R > 99
@@ -35,7 +35,7 @@ f = eval(fex)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
-savefig(plt, "img/seir_sol.svg")
+savefig(plt, "img/seir_sol.png")
 @test sol[end].S < 1
 @test sol[end].E < 1
 @test sol[end].I < 1
@@ -49,7 +49,7 @@ f = eval(fex)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
-savefig(plt, "img/seirs_sol.svg")
+savefig(plt, "img/seirs_sol.png")
 @test sol[end].S > 5
 @test sol[end].E > 5
 @test sol[end].I > 5
