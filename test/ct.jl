@@ -18,10 +18,10 @@ import Base: ∘
 ⊚(a,b) = b ∘ a
 S, E, I, R, D= Ob(FreeSymmetricMonoidalCategory, :S, :E, :I, :R, :D)
 
-inf  = WiringDiagram(Hom(:infection, S ⊗ I, I⊗I))
-expo = WiringDiagram(Hom(:exposure, S⊗I, E⊗I))
-rec  = WiringDiagram(Hom(:recovery, I,   R))
-wan  = WiringDiagram(Hom(:waning,   R,   S))
+inf  = to_wiring_diagram(Hom(:infection, S ⊗ I, I⊗I))
+expo = to_wiring_diagram(Hom(:exposure, S⊗I, E⊗I))
+rec  = to_wiring_diagram(Hom(:recovery, I,   R))
+wan  = to_wiring_diagram(Hom(:waning,   R,   S))
 
 sir_wire  = inf ⊚ (rec ⊗ rec)
 
