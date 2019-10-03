@@ -1,10 +1,13 @@
 using LabelledArrays
-using DifferentialEquations
+using OrdinaryDiffEq
+import OrdinaryDiffEq: solve
 using ModelingToolkit
 using Petri
 import Petri: stripnullterms, fluxes, odefunc, quotesplat
 using Test
 using Plots
+
+N(x) = sum(x)
 
 @variables S,E,I,R, β,γ,μ
 sir = Petri.Model([S,I,R],[(S+I, 2I), (I,R)])
