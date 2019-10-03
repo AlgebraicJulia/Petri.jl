@@ -20,9 +20,9 @@ p = @LArray [0.35, 0.05] (:μ, :β)
 fex = odefunc(sir, :sir)
 f = eval(fex)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
-sol = DifferentialEquations.solve(prob,Tsit5())
+sol = solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
-savefig(plt, "img/sir_sol.pdf")
+savefig(plt, "img/sir_sol.svg")
 @test sol[end].S < 1
 @test sol[end].I < 1
 @test sol[end].R > 99
@@ -33,9 +33,9 @@ p = @LArray [0.35, 0.05, 0.05] (:μ, :β, :γ)
 fex = odefunc(seir, :seir)
 f = eval(fex)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
-sol = DifferentialEquations.solve(prob,Tsit5())
+sol = solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
-savefig(plt, "img/seir_sol.pdf")
+savefig(plt, "img/seir_sol.svg")
 @test sol[end].S < 1
 @test sol[end].E < 1
 @test sol[end].I < 1
@@ -47,9 +47,9 @@ p = @LArray [0.35, 0.05, 0.07, 0.3] (:μ, :β, :γ, :η)
 fex = odefunc(seirs, :seirs)
 f = eval(fex)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
-sol = DifferentialEquations.solve(prob,Tsit5())
+sol = solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
-savefig(plt, "img/seirs_sol.pdf")
+savefig(plt, "img/seirs_sol.svg")
 @test sol[end].S > 5
 @test sol[end].E > 5
 @test sol[end].I > 5
