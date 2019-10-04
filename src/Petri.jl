@@ -13,8 +13,10 @@ using MacroTools
 import MacroTools: postwalk
 import Base: collect
 import Base.Iterators: flatten
+# used to avoid eval
+import GeneralizedGenerated: mk_function
 
-export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc
+export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function
 
 
 include("types.jl")
