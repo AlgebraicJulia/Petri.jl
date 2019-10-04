@@ -1,7 +1,7 @@
 name = "Petri"
 uuid = "4259d249-1051-49fa-8328-3f8ab9391c33"
-authors = ["Micah Halter <micah.halter@gtri.gatech.edu>"]
-version = "0.1.0"
+authors = ["Micah Halter <micah.halter@gtri.gatech.edu>", "James Fairbanks <james.fairbanks@gtri.gatech.edu>"]
+version = "0.1.1"
 
 [deps]
 MacroTools = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
@@ -9,3 +9,14 @@ ModelingToolkit = "961ee093-0014-501f-94e3-6117800e7a78"
 
 [compat]
 julia = "1.0"
+
+[extras]
+DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
+OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+# DifferentialEquations = "0c46a032-eb83-5123-abaf-570d42b7fbaa"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
+
+
+[targets]
+test = ["OrdinaryDiffEq", "LabelledArrays", "Test"]

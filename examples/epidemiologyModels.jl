@@ -97,7 +97,7 @@ Petri.solve(p)
 @time Petri.solve(p)
 
 # +
-mf = Petri.eval(Petri.funckit(p))
+mf = Petri.evaluate(Petri.funckit(p))
 
 pf = Petri.Problem(mf, SIRState(100, 1, 0, 0.5, 0.15, 0.05), 150)
 Petri.solve(pf)
@@ -110,7 +110,7 @@ Petri.solve(pf)
 Petri.solve(p2)
 @time Petri.solve(p2)
 
-mf2 = Petri.eval(Petri.funckit(p2))
+mf2 = Petri.evaluate(Petri.funckit(p2))
 pf2 = Petri.Problem(mf2, SEIRState(100, 1, 0, 0.5, 0.15, 0.05, 0, 0.12), 150)
 Petri.solve(pf2)
 @time Petri.solve(pf2)
@@ -121,7 +121,7 @@ Petri.solve(pf2)
 Petri.solve(p3)
 @time Petri.solve(p3)
 
-mf3 = Petri.eval(Petri.funckit(p3))
+mf3 = Petri.evaluate(Petri.funckit(p3))
 pf3 = Petri.Problem(mf3, SEIRDState(100, 1, 0, 0.5, 0.15, 0.05, 0, 0.12, 0, 0.1), 150)
 Petri.solve(pf3)
 @time Petri.solve(pf3)
