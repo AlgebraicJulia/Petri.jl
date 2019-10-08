@@ -18,7 +18,6 @@ import GeneralizedGenerated: mk_function
 
 export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function
 
-
 include("types.jl")
 
 sample(rates) = begin

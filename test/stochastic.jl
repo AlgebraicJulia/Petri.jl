@@ -7,6 +7,7 @@ import MacroTools: postwalk, striplines
 using Test
 import GeneralizedGenerated: mk_function
 
+
 @testset "Stochastic Simulation" begin
     @variables S,E,I,R, β,γ,μ
     @testset "SIR" begin

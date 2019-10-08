@@ -1,4 +1,7 @@
+
+
 N(x) = sum(x)
+
 function fluxes(model)
     terms = map(enumerate(model.Δ)) do (i, δ)
         inn, out = δ
@@ -31,6 +34,7 @@ end
 odefunc(m, prefix::Symbol) = funckit(gensym(prefix),
                                      (:du, :state, :param, :t),
                                      quotesplat(fluxes(m)))
+
 function mk_function(m::Model)
     fex = odefunc(m, :f)
     arglist = fex.args[2].args[1].args[2:end]
