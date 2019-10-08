@@ -77,6 +77,17 @@ function solve(p::AbstractProblem)
   state
 end
 
+function solve(p::AbstractProblem, step)
+  state = p.initial
+  for i in 1:p.steps
+      s = step(p, state)
+      if s != nothing
+          state = s
+      end
+  end
+  state
+end
+
 function step(p::Problem, state)
   #@show state
   n = length(p.m.Δ)
