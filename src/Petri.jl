@@ -17,7 +17,7 @@ import Base.Iterators: flatten
 # used to avoid eval
 import GeneralizedGenerated: mk_function
 
-export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function
+export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function, symbolic_symplify
 
 
 
