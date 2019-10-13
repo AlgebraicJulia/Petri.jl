@@ -229,4 +229,5 @@ coeffvalue(coeff::Any) = coeff
 include("metaprogramming.jl")
 include("stochastic.jl")
 include("ode.jl")
+include("openmodels.jl")
 end #Module
