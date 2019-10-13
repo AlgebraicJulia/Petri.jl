@@ -1,4 +1,3 @@
-module OpenModels
 import Base: ==, ∈
 using Petri
 using ModelingToolkit
@@ -135,4 +134,3 @@ end
 NullModel(n::Int) = Model(collect(1:n), Vector{Tuple{Operation,Operation}}())
 eye(n::Int) = foldr(otimes, [OpenModel([1], NullModel(1), [1]) for i in 1:n])
 
-end

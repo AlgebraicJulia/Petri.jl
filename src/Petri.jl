@@ -230,4 +230,6 @@ include("metaprogramming.jl")
 include("stochastic.jl")
 include("ode.jl")
 include("openmodels.jl")
+# STATELOOKUP = OpenModels.STATELOOKUP
+include("visualization.jl")
 end #Module
