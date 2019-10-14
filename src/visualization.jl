@@ -64,13 +64,13 @@ convert an OpenModel into a GraphViz Graph. This calls Graph(::Model) and then a
 function Graph(f::OpenModel)
     g = Graph(f.model)
     A, M, B = f.dom, f.model, f.codom
-    stmts_dom = map(A) do a
+    stmts_dom = map(enumerate(A)) do (i,a)
         m = M.S[a]
-        Edge(["I$a", "X$m"], Attributes(:style=>"dashed"))
+        Edge(["I$i", "X$m"], Attributes(:style=>"dashed"))
     end
-    stmts_codom = map(A) do a
+    stmts_codom = map(enumerate(A)) do (i,a)
         m = M.S[a]
-        Edge(["X$m", "O$a"], Attributes(:style=>"dashed"))
+        Edge(["X$m", "O$i"], Attributes(:style=>"dashed"))
     end
     append!(g.stmts, append!(stmts_dom, stmts_codom))
     return g
