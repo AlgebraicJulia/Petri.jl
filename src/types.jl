@@ -24,6 +24,11 @@ Constructor to initialize a Petri net with just states and transition functions
 """
 Model(s::S, δ::D) where {S<:Vector,D<:Vector{Tuple{Operation, Operation}}} = Model(s, δ, [],[])
 
+samelist(x,y) = length(x) == length(y) && all(isequal.(x, y))
+
+function ==(x::Petri.Model,y::Petri.Model)
+    return samelist(x.S, y.S) && samelist(x.Δ, y.Δ) && samelist(x.Λ, y.Λ) && samelist(x.Φ, y.Φ)
+end
 
 abstract type AbstractProblem end
 

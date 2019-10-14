@@ -5,6 +5,18 @@ using ModelingToolkit
 using MacroTools
 import MacroTools: postwalk
 
+@testset "Equality" begin
+    @variables S, E, I, R
+    sir = Model([S,I,R], [(S+I, 2I), (I,R)])
+    @test sir == sir
+    seir = Model([S,E, I,R], [(S+I, E+I), (I,R)])
+    x = Model([S, E, I,R], [(S+I, 2I), (I,R)])
+    y = Model([S, E, I,R], [(S+I, E+I), (I,R), (R,S)])
+    @test sir != seir
+    @test seir != x
+    @test seir != y
+end
+
 include("stochastic.jl")
 
 mutable struct SIRState{T,F}
