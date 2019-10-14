@@ -13,13 +13,10 @@ using MacroTools
 import MacroTools: postwalk
 import Base: collect
 import Base.Iterators: flatten
-
 # used to avoid eval
 import GeneralizedGenerated: mk_function
 
 export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function
-
-
 
 include("types.jl")
 
@@ -75,6 +72,17 @@ function solve(p::AbstractProblem)
   state = p.initial
   for i in 1:p.steps
     state = step(p, state)
+  end
+  state
+end
+
+function solve(p::AbstractProblem, step)
+  state = p.initial
+  for i in 1:p.steps
+      s = step(p, state)
+      if s != nothing
+          state = s
+      end
   end
   state
 end
