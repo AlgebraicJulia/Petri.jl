@@ -16,7 +16,7 @@ import Base.Iterators: flatten
 # used to avoid eval
 import GeneralizedGenerated: mk_function
 
-export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function
+export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function, symbolic_symplify
 
 include("types.jl")
 
@@ -237,4 +237,7 @@ coeffvalue(coeff::Any) = coeff
 include("metaprogramming.jl")
 include("stochastic.jl")
 include("ode.jl")
+include("openmodels.jl")
+# STATELOOKUP = OpenModels.STATELOOKUP
+include("visualization.jl")
 end #Module
