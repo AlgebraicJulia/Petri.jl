@@ -11,7 +11,7 @@ using ModelingToolkit
 import ModelingToolkit: Constant, Variable
 using MacroTools
 import MacroTools: postwalk
-import Base: collect
+import Base: collect, ==
 import Base.Iterators: flatten
 # used to avoid eval
 import GeneralizedGenerated: mk_function
