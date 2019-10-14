@@ -93,3 +93,11 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
 There are operations that are easy to do on the `Petri.Model` like "add a transition from R to S" that require simultaneously changing multiple parts of the algebraic formulation. Applied Category Theory gives a sound theoretical framework for manipulating Petri Nets as a model of chemical reactions. `Petri` is a Julia package primarily intended to investigate how we can operationalize this theory into practical scientific software.
 
 See [SemanticModels.ModelTools](https://github.com/jpfairbanks/SemanticModels.jl/blob/master/src/modeltools/PetriModels.jl "PetriModel") for tools that work with Petri net models and manipulating them with higher level APIs based on ACT.
+
+## Visualization
+
+You can draw `Petri.Model` objects with Graphviz using a bipartite graph representation. See the `Petri.Graph(m::Petri.Model)` function.
+
+## Open Petri Nets
+
+An open Petri Net can be used to model a system that interacts with the outside world. For example a chemical reaction that has inflows and outflows of concentration for certain species, can be represented as an `OpenModel` where the inflows occur on the `dom` and the outflows on the `codom` of the `OpenModel`. This allows you to represent interacting systems from an algebraic perspective. These systems an be combined with composition and combination operators to make complex models out of simple building blocks.

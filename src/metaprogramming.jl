@@ -28,6 +28,57 @@ function simplify(t::Expr)
     end
 end
 
+"""    symbolic_symplify(ex::Expr)
+
+a more thorouugh simplification of an expression,
+removes -1/1, *(a,*(b,c)) and *(a,/(b,c)).
+"""
+function symbolic_symplify(ex::Expr)
+    iscall(x) = false
+    iscall(x, name::Symbol) = false
+    iscall(x::Expr) = x.head == :call
+    iscall(x::Expr, name::Symbol) = iscall(x) && x.args[1] == name
+
+    MacroTools.postwalk(ex) do x
+        if x == :param
+            return :T
+        end
+        if x == :state
+            return :u
+        end
+        # -1/1 => -1
+        if x == :(-1/1)
+            return :(-1)
+        end
+        # +(x) => x
+        if iscall(x, :+) && length(x.args)==2
+            return x.args[2]
+        end
+        # 1*x => x
+        if iscall(x, :*) && length(x.args)==3 && x.args[2] == 1
+            return x.args[3]
+        end
+        # *(a, *(b,c)) => *(a,b,c)
+        if iscall(x, :*) && length(x.args)==3 && iscall(x.args[end], :*)
+            return :(*($(x.args[2]), $(x.args[3].args[2:end]...)))
+        end
+        # *(a, /(b,c)) => /(*(a,b),c)
+        if iscall(x, :*) && length(x.args)==3 && iscall(x.args[end], :/)
+            a = x.args[2]
+            b = x.args[3].args[2]
+            c = x.args[3].args[3]
+            num = :(*($(a), $(b)))
+            # apply *(a, *(b,c)) => *(a,b,c) again
+            if iscall(num, :*) && length(num.args)==3 && iscall(num.args[end], :*)
+                num = :(*($(num.args[2]), $(num.args[3].args[2:end]...)))
+            end
+            f = :($num / $c)
+            return f
+        end
+        return x
+    end
+end
+
 stripnullterms(e) = begin
     newex = MacroTools.postwalk(e) do ex
         if typeof(ex) != Expr; return ex end
