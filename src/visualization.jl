@@ -68,7 +68,7 @@ function Graph(f::OpenModel)
         m = M.S[a]
         Edge(["I$i", "X$m"], Attributes(:style=>"dashed"))
     end
-    stmts_codom = map(enumerate(A)) do (i,a)
+    stmts_codom = map(enumerate(B)) do (i,a)
         m = M.S[a]
         Edge(["X$m", "O$i"], Attributes(:style=>"dashed"))
     end
