@@ -56,22 +56,3 @@ function Graph(model::Model)
     g = Graphviz.Graph("G", true, stmts, graph_attrs, node_attrs,edge_attrs)
     return g
 end
-
-"""    Graph(f::OpenModel)
-
-convert an OpenModel into a GraphViz Graph. This calls Graph(::Model) and then adds vertices (and edges) for the domain and codomain of the open model.
-"""
-function Graph(f::OpenModel)
-    g = Graph(f.model)
-    A, M, B = f.dom, f.model, f.codom
-    stmts_dom = map(enumerate(A)) do (i,a)
-        m = M.S[a]
-        Edge(["I$i", "X$m"], Attributes(:style=>"dashed"))
-    end
-    stmts_codom = map(enumerate(B)) do (i,a)
-        m = M.S[a]
-        Edge(["X$m", "O$i"], Attributes(:style=>"dashed"))
-    end
-    append!(g.stmts, append!(stmts_dom, stmts_codom))
-    return g
-end
