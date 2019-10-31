@@ -1,7 +1,7 @@
 import Base.Iterators: flatten
 using ModelingToolkit
 using Catlab.Graphics.Graphviz
-import Catlab.Graphics.Graphviz: Graph
+import Catlab.Graphics.Graphviz: Graph, Edge
 
 
 graph_attrs = Attributes(:rankdir=>"LR")
@@ -25,19 +25,19 @@ function edgify(root::Operation, transition::Int, reverse::Bool)
             else
                 a = x.op.name
             end
-            b = STATELOOKUP[a]
+            b = string(a)
             attr =  Attributes(:label=>"$weight", :labelfontsize=>"6")
-            return Edge(reverse ? ["T$i", "X$b"] : ["X$b", "T$i"],attr)
+            return Edge(reverse ? ["T$i", "$b"] : ["$b", "T$i"],attr)
         end
     end
     if root.op == (*)
-        b = STATELOOKUP[root.args[2].op.name]
+        b = string(root.args[2].op.name)
         weight = "$(root.args[1].value)"
         attr =  Attributes(:label=>"$weight", :labelfontsize=>"6")
     else
-        b = STATELOOKUP[root.op.name]
+        b = string(root.op.name)
     end
-    return [Edge(reverse ? ["T$i", "X$b"] : ["X$b", "T$i"], attr)]
+    return [Edge(reverse ? ["T$i", "$b"] : ["$b", "T$i"], attr)]
 end
 
 """    Graph(model::Model)
@@ -45,7 +45,7 @@ end
 convert a Model into a GraphViz Graph. Transition are green boxes and states are blue circles. Arrows go from the input states to the output states for each transition.
 """
 function Graph(model::Model)
-    statenodes = [Node(string("X$s"), Attributes(:shape=>"circle", :color=>"dodgerblue2")) for s in model.S]
+    statenodes = [Node(string("$s"), Attributes(:shape=>"circle", :color=>"dodgerblue2")) for s in model.S]
     transnodes = [Node("T$i", Attributes(:shape=>"square", :color=>"forestgreen")) for i in 1:length(model.Δ)]
 
     stmts = vcat(statenodes, transnodes)
