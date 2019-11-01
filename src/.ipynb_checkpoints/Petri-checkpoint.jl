@@ -11,47 +11,16 @@ using ModelingToolkit
 import ModelingToolkit: Constant, Variable
 using MacroTools
 import MacroTools: postwalk
-import Base: eval
+import Base: collect, ==
+import Base.Iterators: flatten
+# used to avoid eval
+import GeneralizedGenerated: mk_function
 
-export Model, solve, funckit
+export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function, symbolic_symplify, NullPetri
 
-""" Model{G,S,D,L,P}
+include("types.jl")
 
-Structure for representing the petri net model
-
-represented by grounding, states, transition function, transition rates, and predicates
-"""
-struct Model{G,S,D,L,P}
-  g::G  # grounding
-  S::S  # states
-  Δ::D  # transition function
-  Λ::L  # transition rate
-  Φ::P  # if state should happen
-end
-
-""" Model(s::S, δ::D, λ::L, ϕ::P)
-
-Constructor to initialize a Petri net
-"""
-Model(s::S, δ::D, λ::L, ϕ::P) where {S,D,L,P} = Model{Any,S,D,L,P}(missing, s, δ, λ, ϕ)
-
-""" Model(s::S, δ::D)
-
-Constructor to initialize a Petri net with just states and transition functions
-"""
-Model(s::S, δ::D) where {S<:Vector,D<:Vector{Tuple{Operation, Operation}}} = Model(s, δ, [],[])
-
-""" Problem{M<:Model, S, N}
-
-Structure for representing a petri net problem
-
-represented by a petri net model, initial state, and number of steps
-"""
-struct Problem{M<:Model, S, N}
-  m::M
-  initial::S
-  steps::N
-end
+NullPetri(n::Int) = Model(collect(1:n), Vector{Tuple{Operation,Operation}}())
 
 sample(rates) = begin
   s = cumsum(rates)
@@ -101,10 +70,21 @@ end
 
 Evaluate petri net problem and return the final state
 """
-function solve(p::Problem)
+function solve(p::AbstractProblem)
   state = p.initial
   for i in 1:p.steps
     state = step(p, state)
+  end
+  state
+end
+
+function solve(p::AbstractProblem, step)
+  state = p.initial
+  for i in 1:p.steps
+      s = step(p, state)
+      if s != nothing
+          state = s
+      end
   end
   state
 end
@@ -130,11 +110,11 @@ function step(p::Problem, state)
   state
 end
 
-""" eval(m::Model)
+""" evaluate(m::Model)
 
 evaluate all functions of petri model m
 """
-Base.eval(m::Model) = Model(m.g, m.S, eval.(m.Δ), eval.(m.Λ), eval.(m.Φ))
+evaluate(m::Model) = Model(m.g, m.S, eval.(m.Δ), eval.(m.Λ), eval.(m.Φ))
 
 function step(p::Problem{Model{T,
               Array{Operation,1},
@@ -160,7 +140,7 @@ function step(p::Problem{Model{T,
   state
 end
 
-function step(p::Petri.Problem{Petri.Model{T,
+function step(p::Problem{Model{T,
               Array{Operation,1},
               Array{Function,1},
               Array{Function,1},
@@ -171,6 +151,27 @@ function step(p::Petri.Problem{Petri.Model{T,
   n = length(p.m.Δ)
   rates = map(p.m.Λ) do λ
     λ(state)
+  end
+  # @show rates
+  nexti = sample(rates)
+  if nexti == nothing
+    return state
+  end
+  # @show nexti
+  p.m.Δ[nexti](state)
+  state
+end
+function step(p::ParamProblem{Model{T,
+              Array{Operation,1},
+              Array{Function,1},
+              Array{Function,1},
+              Missing},
+              S, N} where {T,S,N},
+              state)
+  # @show state
+  n = length(p.m.Δ)
+  rates = map(p.m.Λ) do λ
+    λ(state, p.param)
   end
   # @show rates
   nexti = sample(rates)
@@ -221,61 +222,23 @@ function apply(op::Function, expr::Operation, data)
   return op(anses...)
 end
 
-function funcbody(ex::Equation, ctx=:state)
-  return ex.lhs.op.name => funcbody(ex.rhs, ctx)
-end
-
-function funcbody(ex::Operation, ctx=:state)
-  args = Symbol[]
-  body = postwalk(convert(Expr, ex)) do x
-    # @show x, typeof(x);
-    if typeof(x) == Expr && x.head == :call
-      if length(x.args) == 1
-        var = x.args[1]
-        push!(args, var)
-        return :($ctx.$var)
-      end
+function collect(d::Dict, seq)
+    for p in seq
+        if p[1] in keys(d)
+            push!(d[p[1]], p[2])
+        else
+            d[p[1]] = [p[2]]
+        end
     end
-    return x
-  end
-  return body, Set(args)
+    return d
 end
 
-funckit(fname, args, body) = quote $fname($(collect(args)...)) = $body end
-funckit(fname::Symbol, arg::Symbol, body) = quote $fname($arg) = $body end
+coeffvalue(coeff::ModelingToolkit.Constant) = coeff.value
+coeffvalue(coeff::Any) = coeff
 
-""" funckit(p::Petri.Problem, ctx=:state)
-
-Compile petri net problem to native Julia expressions for faster solving
-"""
-function funckit(p::Petri.Problem, ctx=:state)
-  # @show "Λs"
-  λf = map(p.m.Λ) do λ
-    body, args = funcbody(λ, ctx)
-    fname = gensym("λ")
-    q = funckit(fname, ctx, body)
-    return q
-  end
-  # @show "Δs"
-  δf = map(p.m.Δ) do δ
-    q = quote end
-    map(δ) do f
-      vname, vfunc = funcbody(f, ctx)
-      body, args = vfunc
-      qi = :(state.$vname = $body)
-      push!(q.args, qi)
-    end
-    sym = gensym("δ")
-    :($sym(state) = $(q) )
-  end
-
-  # @show "Φs"
-  ϕf = map(p.m.Φ) do ϕ
-    body, args = funcbody(ϕ, ctx)
-    fname = gensym("ϕ")
-    q = funckit(fname, ctx, body)
-  end
-  return Model(p.m.S, δf, λf, ϕf)
-end
-
-end
+include("metaprogramming.jl")
+include("stochastic.jl")
+include("ode.jl")
+# STATELOOKUP = OpenModels.STATELOOKUP
+include("visualization.jl")
+end #Module

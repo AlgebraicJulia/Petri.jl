@@ -16,9 +16,11 @@ import Base.Iterators: flatten
 # used to avoid eval
 import GeneralizedGenerated: mk_function
 
-export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function, symbolic_symplify
+export Model, Problem, ParamProblem, solve, funckit, evaluate, odefunc, mk_function, symbolic_symplify, NullPetri
 
 include("types.jl")
+
+NullPetri(n::Int) = Model(collect(1:n), Vector{Tuple{Operation,Operation}}())
 
 sample(rates) = begin
   s = cumsum(rates)
@@ -237,7 +239,6 @@ coeffvalue(coeff::Any) = coeff
 include("metaprogramming.jl")
 include("stochastic.jl")
 include("ode.jl")
-include("openmodels.jl")
 # STATELOOKUP = OpenModels.STATELOOKUP
 include("visualization.jl")
 end #Module
