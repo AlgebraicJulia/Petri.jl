@@ -12,7 +12,7 @@ StaticArrays = "90137ffa-7385-5640-81b9-e52037218182"
 
 [compat]
 julia = "1.0"
-Catlab = ">=0.3,<1.0"
+Catlab = "0.3"
 GeneralizedGenerated = "<1.0"
 MacroTools = "<1.0"
 ModelingToolkit = "<1.0"
