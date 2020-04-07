@@ -1,4 +1,4 @@
-![Petri.jl](doc/assets/full-logo.png)
+![Petri.jl](docs/assets/full-logo.png)
 
 A Petri net modeling framework for the Julia programming language.
 
@@ -24,7 +24,7 @@ N(x) = sum(x)
 The SIR model represents the epidemiological dynamics of an infectious disease that causes immunity in its victims. There are three *states:* `Suceptible ,Infected, Recovered`. These states interact through two *transitions*. Infection has the form `S+I -> 2I` where a susceptible person meets an infected person and results in two infected people. The second transition is recovery `I -> R` where an infected person recovers spontaneously.
 
 
-![The SIR model system shown as a Petri net with ODE formulas](/doc/img/sir_petri+ode.png?raw=true "SIR Model")
+![The SIR model system shown as a Petri net with ODE formulas](/docs/img/sir_petri+ode.png?raw=true "SIR Model")
 
 ```julia
 # define the structure of the model
@@ -55,7 +55,7 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 
 Petri Nets are a simple language for describing reaction networks, you can make increasingly complex diseases. For example the `SEIR` model has an `Exposed` phase where people have the disease, but are not infectious yet.
 
-![The SEIR model system shown as a Petri net](/doc/img/seir.png?raw=true "SEIR Model")
+![The SEIR model system shown as a Petri net](/docs/img/seir.png?raw=true "SEIR Model")
 
 ```julia
 seir = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R)])
@@ -72,7 +72,7 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 
 The previous models have transitory behavior, the infection spreads and then terminates as you end up with no infected people in the population. The following `SEIRS` model has a non-trivial steady state, because recovered people lose their immunity and become susceptible again.
 
-![The SEIRS model system shown as a Petri net](/doc/img/seirs.png?raw=true "SEIR Model")
+![The SEIRS model system shown as a Petri net](/docs/img/seirs.png?raw=true "SEIR Model")
 
 ```julia
 seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])

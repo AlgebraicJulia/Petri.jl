@@ -6,3 +6,5 @@ deps/deps.jl
 .ipynb_checkpoints
 
 dev
+
+env
