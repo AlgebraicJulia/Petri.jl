@@ -1,4 +1,4 @@
-![Petri.jl](docs/assets/full-logo.png)
+![Petri.jl](docs/src/assets/full-logo.png)
 
 A Petri net modeling framework for the Julia programming language.
 
@@ -24,7 +24,7 @@ N(x) = sum(x)
 The SIR model represents the epidemiological dynamics of an infectious disease that causes immunity in its victims. There are three *states:* `Suceptible ,Infected, Recovered`. These states interact through two *transitions*. Infection has the form `S+I -> 2I` where a susceptible person meets an infected person and results in two infected people. The second transition is recovery `I -> R` where an infected person recovers spontaneously.
 
 
-![The SIR model system shown as a Petri net with ODE formulas](/docs/img/sir_petri+ode.png?raw=true "SIR Model")
+![The SIR model system shown as a Petri net with ODE formulas](/docs/src/img/sir_petri+ode.png?raw=true "SIR Model")
 
 ```julia
 # define the structure of the model
@@ -50,12 +50,12 @@ sol = DifferentialEquations.solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 ```
 
-![A solution to the SIR model system](/examples/img/sir_sol.png?raw=true "SIR Solution")
+![A solution to the SIR model system](/docs/src/img/sir_sol.png?raw=true "SIR Solution")
 
 
 Petri Nets are a simple language for describing reaction networks, you can make increasingly complex diseases. For example the `SEIR` model has an `Exposed` phase where people have the disease, but are not infectious yet.
 
-![The SEIR model system shown as a Petri net](/docs/img/seir.png?raw=true "SEIR Model")
+![The SEIR model system shown as a Petri net](/docs/src/img/seir.png?raw=true "SEIR Model")
 
 ```julia
 seir = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R)])
@@ -68,11 +68,11 @@ sol = DifferentialEquations.solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end]))|> collect)
 ```
 
-![A solution to the SEIR model system](/examples/img/seir_sol.png?raw=true "SEIR Solution")
+![A solution to the SEIR model system](/docs/src/img/seir_sol.png?raw=true "SEIR Solution")
 
 The previous models have transitory behavior, the infection spreads and then terminates as you end up with no infected people in the population. The following `SEIRS` model has a non-trivial steady state, because recovered people lose their immunity and become susceptible again.
 
-![The SEIRS model system shown as a Petri net](/docs/img/seirs.png?raw=true "SEIR Model")
+![The SEIRS model system shown as a Petri net](/docs/src/img/seirs.png?raw=true "SEIR Model")
 
 ```julia
 seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])
@@ -85,7 +85,7 @@ sol = DifferentialEquations.solve(prob,Tsit5())
 plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
 ```
 
-![A solution to the SEIRS model system](/examples/img/seirs_sol.png?raw=true "SEIRS Solution")
+![A solution to the SEIRS model system](/docs/src/img/seirs_sol.png?raw=true "SEIRS Solution")
 
 ## Goals
 
@@ -93,7 +93,7 @@ plt = plot(sol, labels=LabelledArrays.symnames(typeof(sol[end])) |> collect)
 
 There are operations that are easy to do on the `Petri.Model` like "add a transition from R to S" that require simultaneously changing multiple parts of the algebraic formulation. Applied Category Theory gives a sound theoretical framework for manipulating Petri Nets as a model of chemical reactions. `Petri` is a Julia package primarily intended to investigate how we can operationalize this theory into practical scientific software.
 
-See [SemanticModels.ModelTools](https://github.com/jpfairbanks/SemanticModels.jl/blob/master/src/modeltools/PetriModels.jl "PetriModel") for tools that work with Petri net models and manipulating them with higher level APIs based on ACT.
+See [SemanticModels](https://github.com/jpfairbanks/SemanticModels.jl) for tools that work with Petri net models and manipulating them with higher level APIs based on ACT.
 
 ## Visualization
 

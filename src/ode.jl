@@ -1,3 +1,9 @@
+"""
+    toODE(m::Model)
+
+Convert a petri model into a differential equation function that can
+be passed into DifferentialEquation.jl or OrdinaryDiffEq.jl solvers
+"""
 function toODE(m::Model)
     S = m.S
     T = m.Δ

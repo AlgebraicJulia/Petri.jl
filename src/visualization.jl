@@ -6,11 +6,6 @@ graph_attrs = Attributes(:rankdir=>"LR")
 node_attrs  = Attributes(:shape=>"plain", :style=>"filled", :color=>"white")
 edge_attrs  = Attributes(:splines=>"splines")
 
-"""    edgify(root::Operation, transition::Int, reverse::Bool)
-
-convert a Model tranition into a Graphviz edge statement.
-if reverse i true assume that this is the outgoing edge.
-"""
 function edgify(δ, transition::Int, reverse::Bool)
     attr = Attributes()
     i = transition
@@ -22,7 +17,8 @@ function edgify(δ, transition::Int, reverse::Bool)
     end
 end
 
-"""    Graph(model::Model)
+"""
+    Graph(model::Model)
 
 convert a Model into a GraphViz Graph. Transition are green boxes and states are blue circles. Arrows go from the input states to the output states for each transition.
 """

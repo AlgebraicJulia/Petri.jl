@@ -1,6 +1,5 @@
-# -*- coding: utf-8 -*-
-# + {}
-""" Petri
+"""
+    Petri
 
 Provides a modeling framework for representing and solving stochastic petri nets
 
@@ -11,9 +10,15 @@ export Model, Problem, NullPetri, solve, toODE, NullPetri
 
 include("types.jl")
 
+"""
+    NullPetri(n::Int)
+
+create a Petri net of ``n`` states with no transitions
+"""
 NullPetri(n::Int) = Model(collect(1:n), Vector{Tuple{Dict{Int, Int},Dict{Int, Int}}}())
 
-""" solve(p::Problem)
+"""
+    solve(p::Problem)
 
 Evaluate petri net problem and return the final state
 """
@@ -21,17 +26,6 @@ function solve(p::AbstractProblem)
   state = p.initial
   for i in 1:p.steps
     state = step(p, state)
-  end
-  return state
-end
-
-function solve(p::AbstractProblem, step)
-  state = p.initial
-  for i in 1:p.steps
-      s = step(p, state)
-      if s != nothing
-          state = s
-      end
   end
   return state
 end

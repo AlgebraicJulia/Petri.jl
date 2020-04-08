@@ -1,4 +1,5 @@
-""" Model{S,D}
+"""
+    Model{S,D}
 
 Structure for representing the petri net model
 
@@ -15,7 +16,8 @@ end
 
 abstract type AbstractProblem end
 
-""" Problem{M<:Model, S, N}
+"""
+    Problem{M<:Model, S, N}
 
 Structure for representing a petri net problem
 
