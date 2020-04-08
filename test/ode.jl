@@ -1,83 +1,59 @@
 using Test
 using Petri
-import Petri: fluxes, odefunc
-using ModelingToolkit
-using LabelledArrays
+import Petri: toODE
 using OrdinaryDiffEq
 import OrdinaryDiffEq: solve
 
 @testset "Generation of ODE formulas" begin
-    @variables S,E,I,R, β,γ,μ
-    sir = Petri.Model([S,I,R],[(S+I, 2I), (I,R)])
-    seir = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R)])
-    seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])
+    sir = Petri.Model([:S,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>2)),
+                                  (Dict(:I=>1),       Dict(:R=>1))])
 
-    sirf = fluxes(sir)
-    @test length(sirf) == 3
-
-    seirf = fluxes(seir)
-    @test length(seirf) == 4
-
-    seirsf = fluxes(seirs)
-    @test length(seirsf) == 4
+    sirf = toODE(sir)
+    @test sirf(zeros(Float64, 3), [100.0,1.0,0.0], [0.35,0.05],0.0) == [-35.0,34.95,0.05]
 end
 
-
-N(x) = sum(x)
-
 @testset "Generation of ODE solutions" begin
-    @variables S,E,I,R, β,γ,μ
-    sir = Petri.Model([S,I,R],[(S+I, 2I), (I,R)])
-    seir = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R)])
-    seirs = Petri.Model([S,E,I,R],[(S+I, E+I), (E,I), (I,R), (R,S)])
-    fex = odefunc(sir,:sir)
-    f = eval(fex)
-    u0 = @LArray [100.0, 1, 0] (:S, :I, :R)
-    dusir = @LArray [0.0, 0.0, 0.0] (:S, :I, :R)
-    p = @LArray [0.35, 0.05] (:μ, :β)
-    f(dusir, u0, p, 0.0)
-    @show dusir
-
-
     @testset "SIR Solving" begin
-        u0 = @LArray [100.0, 1, 0] (:S, :I, :R)
-        p = @LArray [0.35, 0.05] (:μ, :β)
-        fex = odefunc(sir, :sir)
-        f = eval(fex)
+        sir = Petri.Model([:S,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>2)),
+                                      (Dict(:I=>1),       Dict(:R=>1))])
+        u0 = [100.0, 1, 0]
+        p = [0.35, 0.05]
+        f = toODE(sir)
         prob = ODEProblem(f,u0,(0.0,365.0),p)
         sol = solve(prob,Tsit5())
-        @test sol[end].S < 1
-        @test sol[end].I < 1
-        @test sol[end].R > 99
+        @test sol[end][1] < 1
+        @test sol[end][2] < 1
+        @test sol[end][3] > 99
     end
 
     @testset "SEIR Solving" begin
-        u0 = @LArray [100.0, 1, 0, 0] (:S, :E, :I, :R)
-        p = @LArray [0.35, 0.05, 0.05] (:μ, :β, :γ)
-        fex = odefunc(seir, :seir)
-        f = eval(fex)
+        seir = Petri.Model([:S,:E,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>1,:E=>1)),
+                                          (Dict(:E=>1),       Dict(:I=>1)),
+                                          (Dict(:I=>1),       Dict(:R=>1))])
+        u0 = [100.0, 1, 0, 0]
+        p = [0.35, 0.05, 0.05]
+        f = toODE(seir)
         prob = ODEProblem(f,u0,(0.0,365.0),p)
         sol = solve(prob,Tsit5())
-        @test sol[end].S < 1
-        @test sol[end].E < 1
-        @test sol[end].I < 1
-        @test sol[end].R > 99
+        @test sol[end][1] < 1
+        @test sol[end][2] < 1
+        @test sol[end][3] < 1
+        @test sol[end][4] > 99
     end
 
     @testset "SEIRS Solving" begin
-        u0 = @LArray [100.0, 1, 0, 0] (:S, :E, :I, :R)
-        p = @LArray [0.35, 0.05, 0.07, 0.3] (:μ, :β, :γ, :η)
-        fex = odefunc(seirs, :seirs)
-        f = eval(fex)
-        prob = ODEProblem(f,u0,(0.0,365.0),p)
+        seirs = Petri.Model([:S,:E,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>1,:E=>1)),
+                                           (Dict(:E=>1),       Dict(:I=>1)),
+                                           (Dict(:I=>1),       Dict(:R=>1)),
+                                           (Dict(:R=>1),       Dict(:S=>1))])
+        u0 = [100.0, 1, 0, 0]
+        p = [0.3, 0.4, 0.01, 0.01]
+        f = toODE(seirs)
+        prob = ODEProblem(f,u0,(0.0,60.0),p)
         sol = solve(prob,Tsit5())
-        @test sol[end].S > 5
-        @test sol[end].E > 5
-        @test sol[end].I > 5
-        @test sol[end].R > 5
-        @test sol[end].S < 95
-        @test sol[end].E < 95
-        @test sol[end].I < 95
-        @test sol[end].R < 95
+        @test sol[end][1] < 1
+        @test sol[end][2] < 1
+        @test sol[end][3] > 60
+        @test sol[end][4] > 30
     end
 end

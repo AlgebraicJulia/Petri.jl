@@ -1,81 +1,67 @@
 using Test
 using Petri
-import Petri: stripnullterms, fluxes, odefunc, quotesplat
-using ModelingToolkit
-using MacroTools
-import MacroTools: postwalk
+import Petri: toODE
 
 @testset "Equality" begin
-    @variables S, E, I, R
-    sir = Model([S,I,R], [(S+I, 2I), (I,R)])
+    sir = Petri.Model([:S,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>2)),
+                                  (Dict(:I=>1),       Dict(:R=>1))])
     @test sir == sir
-    seir = Model([S,E, I,R], [(S+I, E+I), (I,R)])
-    x = Model([S, E, I,R], [(S+I, 2I), (I,R)])
-    y = Model([S, E, I,R], [(S+I, E+I), (I,R), (R,S)])
+    seir = Petri.Model([:S,:E,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>1,:E=>1)),
+                                  (Dict(:E=>1),       Dict(:I=>1)),
+                                  (Dict(:I=>1),       Dict(:R=>1))])
+    x = Petri.Model([:S,:E,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>2)),
+                                   (Dict(:I=>1),       Dict(:R=>1))])
+    y = Petri.Model([:S,:E,:I,:R],[(Dict(:S=>1,:I=>1), Dict(:I=>1,:E=>1)),
+                                   (Dict(:E=>1),       Dict(:I=>1)),
+                                   (Dict(:I=>1),       Dict(:R=>1)),
+                                   (Dict(:R=>1),       Dict(:S=>1))])
     @test sir != seir
     @test seir != x
     @test seir != y
 end
 
-include("stochastic.jl")
+#include("stochastic.jl")
 
-mutable struct SIRState{T,F}
-    S::T
-    I::T
-    R::T
-    β::F
-    γ::F
-    μ::F
-end
+#= function test1() =#
+#=     S = [:S,:I,:R] =#
 
-function test1()
-    @variables S, I, R, β, γ, μ
-    N = +(S,I,R)
-    ϕ = [(S > 0) * (I > 0),
-         I > 0,
-         R > 0]
+#=     Δ = [(Dict(:S=>1,:I=>1), Dict(:I=>2)), =#
+#=          (Dict(:I=>1),       Dict(:R=>1)), =#
+#=          (Dict(:R=>1),       Dict(:S=>1))] =#
 
-    Δ = [(S~S-1, I~I+1),
-         (I~I-1, R~R+1),
-         (R~R-1, S~S+1)]
+#=     m = Model(S, Δ) =#
+#=     p = Problem(m, [100, 1, 0], 150) =#
+#= end =#
 
-    Λ = [β*S*I/N,
-         γ*I,
-         μ*R]
+#= p1 = test1() =#
 
-    m = Model([S,I,R], Δ, Λ, ϕ)
-    p = Problem(m, SIRState(100, 1, 0, 0.5, 0.15, 0.05), 150)
-end
+#= m = p1.m =#
+#= map(m.Λ) do λ =#
+#=     body, args = @show Petri.funcbody(λ) =#
+#= end =#
 
-p1 = test1()
+#= S, I, R = m.S =#
 
-m = p1.m
-map(m.Λ) do λ
-    body, args = @show Petri.funcbody(λ)
-end
+#= Δin  = [S+I, I, R] =#
+#= Δout = [2I, R, S] =#
 
-S, I, R = m.S
+#= Δinm = [1 1 0; =#
+#=         0 1 0; =#
+#=         0 0 1] =#
 
-Δin  = [S+I, I, R]
-Δout = [2I, R, S]
+#= Δoutm = [0 2 0; =#
+#=          0 0 1; =#
+#=          1 0 0] =#
 
-Δinm = [1 1 0;
-        0 1 0;
-        0 0 1]
-
-Δoutm = [0 2 0;
-         0 0 1;
-         1 0 0]
-
-du = (Δoutm - Δinm)'m.Λ
+#= du = (Δoutm - Δinm)'m.Λ =#
 
 
-answer = map(enumerate(du)) do (i, ex)
-    body, args = Petri.funcbody(ex)
-    body′ = stripnullterms(body)
-    state = m.S[i].op.name
-    :(du.$(state) = $body′)
-end
-f = Petri.funckit(:f, (:du, :state, :p, :t), quote $(answer...)end )
+#= answer = map(enumerate(du)) do (i, ex) =#
+#=     body, args = Petri.funcbody(ex) =#
+#=     body′ = stripnullterms(body) =#
+#=     state = m.S[i].op.name =#
+#=     :(du.$(state) = $body′) =#
+#= end =#
+#= f = Petri.funckit(:f, (:du, :state, :p, :t), quote $(answer...)end ) =#
 
 include("ode.jl")
