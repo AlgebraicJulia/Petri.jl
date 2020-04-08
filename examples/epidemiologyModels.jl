@@ -1,127 +1,69 @@
 # -*- coding: utf-8 -*-
 using Petri
-
-using ModelingToolkit
-import ModelingToolkit: Constant, Variable
-
-mutable struct SIRState{T,F}
-  S::T
-  I::T
-  R::T
-  β::F
-  γ::F
-  μ::F
-end
-
-mutable struct SEIRState{T,F}
-  S::T
-  I::T
-  R::T
-  β::F
-  γ::F
-  μ::F
-  E::T
-  η::F
-end
-
-mutable struct SEIRDState{T,F}
-  S::T
-  I::T
-  R::T
-  β::F
-  γ::F
-  μ::F
-  E::T
-  η::F
-  D::T
-  ψ::F
-end
-
-function main()
-  @variables S, I, R, β, γ, μ
-  N = +(S,I,R)
-  ϕ = [(S > 0) * (I > 0),
-       I > 0,
-       R > 0]
-
-  Δ = [(S~S-1, I~I+1),
-       (I~I-1, R~R+1),
-       (R~R-1, S~S+1)]
-
-  Λ = [β*S*I/N,
-       γ*I,
-       μ*R]
-
-  m = Petri.Model([S,I,R], Δ, Λ, ϕ)
-  p = Petri.Problem(m, SIRState(100, 1, 0, 0.5, 0.15, 0.05), 150)
-
-  @variables E, η
-  N = +(S,E,I,R)
-  ϕ = [(S > 0) * (I > 0),
-       E > 0]
-
-  Δ = [(S~S-1, E~E+1),
-       (E~E-1, I~I+1)]
-
-  Λ = [β*S*I/N,
-      η*E]
-
-  m2 = Petri.Model([S,E], Δ, Λ, ϕ)
-  f = Dict(S => S)
-  m′ = deepcopy(m)
-  Petri.rewrite!(m′, m2, f)
-  m
-  p2 = Petri.Problem(m′, SEIRState(100, 1, 0, 0.5, 0.15, 0.05, 0, 0.12), 150)
-
-  @variables D, ψ
-  ϕ = [I > 0]
-
-  Δ = [(I~I-1, D~D+1)]
-
-  Λ = [ψ*I]
-
-  m3 = Petri.Model([D], Δ, Λ, ϕ)
-  m′′ = deepcopy(m′)
-  Petri.rewrite!(m′′, m3)
-  p3 = Petri.Problem(m′′, SEIRDState(100, 1, 0, 0.5, 0.15, 0.05, 0, 0.12, 0, 0.1), 150)
-
-  return p, p2, p3
-end
-
-p, p2, p3 = main()
-
+using OrdinaryDiffEq
+using Plots
+using Catlab.Graphics.Graphviz
+import Catlab.Graphics.Graphviz: Graph
 
 @show "SIR"
 
-Petri.solve(p)
-@time Petri.solve(p)
+S  = [:S,:I,:R]
+Δ  = [
+      (Dict(:S=>1, :I=>1), Dict(:I=>2)),
+      (Dict(:I=>1),        Dict(:R=>1)),
+     ]
+m  = Petri.Model(S, Δ)
+p  = Petri.Problem(m, Dict(:S=>100, :I=>1, :R=>0), 150)
 
-# +
-mf = Petri.evaluate(Petri.funckit(p))
+u0 = [10.0, 1.0, 0.0]
+tspan = (0.0,7.5)
+β = [0.4, 0.4]
 
-pf = Petri.Problem(mf, SIRState(100, 1, 0, 0.5, 0.15, 0.05), 150)
-Petri.solve(pf)
-@time Petri.solve(pf)
-# -
+prob = ODEProblem(toODE(p.model), u0, tspan, β)
+sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
+display(plot(sol,label=reshape(p.model.S,1,:)))
+Graph(p.model)
 
 @show "SEIR"
 
-Petri.solve(p2)
-@time Petri.solve(p2)
+S2 = [:S,:E,:I,:R]
+Δ2 = [
+     (Dict(:S=>1, :I=>1), Dict(:I=>1, :E=>1)),
+     (Dict(:E=>1),        Dict(:I=>1)),
+     (Dict(:I=>1),        Dict(:R=>1)),
+    ]
+m2 = Petri.Model(S2, Δ2)
+p2 = Petri.Problem(m2, Dict(:S=>100, :E=>1, :I=>0, :R=>0), 150)
 
-mf2 = Petri.evaluate(Petri.funckit(p2))
-pf2 = Petri.Problem(mf2, SEIRState(100, 1, 0, 0.5, 0.15, 0.05, 0, 0.12), 150)
-Petri.solve(pf2)
-@time Petri.solve(pf2)
+u0 = [10.0, 1.0, 0.0, 0.0]
+tspan = (0.0,15.0)
+β = [0.9, 0.2, 0.5]
 
+prob = ODEProblem(toODE(p2.model), u0, tspan, β)
+sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
+
+display(plot(sol,label=reshape(p2.model.S,1,:)))
+Graph(p2.model)
 
 @show "SEIRD"
 
-Petri.solve(p3)
-@time Petri.solve(p3)
+S3 = [:S,:E,:I,:R, :D]
+Δ3 = [
+     (Dict(:S=>1, :I=>1), Dict(:I=>1, :E=>1)),
+     (Dict(:E=>1),        Dict(:I=>1)),
+     (Dict(:I=>1),        Dict(:R=>1)),
+     (Dict(:I=>1),        Dict(:D=>1)),
+    ]
+m3 = Petri.Model(S3, Δ3)
+p3 = Petri.Problem(m3, Dict(:S=>100, :E=>1, :I=>0, :R=>0, :D=>0), 150)
 
-mf3 = Petri.evaluate(Petri.funckit(p3))
-pf3 = Petri.Problem(mf3, SEIRDState(100, 1, 0, 0.5, 0.15, 0.05, 0, 0.12, 0, 0.1), 150)
-Petri.solve(pf3)
-@time Petri.solve(pf3)
+u0 = [10.0, 1.0, 0.0, 0.0, 0.0]
+tspan = (0.0,15.0)
+β = [0.9, 0.2, 0.5, 0.1]
+
+prob = ODEProblem(toODE(p3.model), u0, tspan, β)
+sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
+
+display(plot(sol,label=reshape(p3.model.S,1,:)))
+Graph(p3.model)

@@ -1,52 +1,30 @@
-""" Model{G,S,D,L,P}
+"""
+    Model{S,D}
 
 Structure for representing the petri net model
 
-represented by grounding, states, transition function, transition rates, and predicates
+represented by states and transition functions
 """
-struct Model{G,S,D,L,P}
-  g::G  # grounding
+struct Model{S,D}
   S::S  # states
   Δ::D  # transition function
-  Λ::L  # transition rate
-  Φ::P  # if state should happen
 end
 
-""" Model(s::S, δ::D, λ::L, ϕ::P)
-
-Constructor to initialize a Petri net
-"""
-Model(s::S, δ::D, λ::L, ϕ::P) where {S,D,L,P} = Model{Any,S,D,L,P}(missing, s, δ, λ, ϕ)
-
-""" Model(s::S, δ::D)
-
-Constructor to initialize a Petri net with just states and transition functions
-"""
-Model(s::S, δ::D) where {S<:Vector,D<:Vector{Tuple{Operation, Operation}}} = Model(s, δ, [],[])
-
-samelist(x,y) = length(x) == length(y) && all(isequal.(x, y))
-
 function ==(x::Petri.Model,y::Petri.Model)
-    return samelist(x.S, y.S) && samelist(x.Δ, y.Δ) && samelist(x.Λ, y.Λ) && samelist(x.Φ, y.Φ)
+  return x.S == y.S && x.Δ == y.Δ
 end
 
 abstract type AbstractProblem end
 
-""" Problem{M<:Model, S, N}
+"""
+    Problem{M<:Model, S, N}
 
 Structure for representing a petri net problem
 
 represented by a petri net model, initial state, and number of steps
 """
 struct Problem{M<:Model, S, N} <: AbstractProblem
-  m::M
+  model::M
   initial::S
-  steps::N
-end
-
-struct ParamProblem{M<:Model, S, V, N} <: AbstractProblem
-  m::M
-  initial::S
-  param::V
   steps::N
 end
