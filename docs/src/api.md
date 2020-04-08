@@ -2,5 +2,4 @@
 
 ```@autodocs
 Modules = [Petri]
-Private = false
 ```
