@@ -1,5 +1,8 @@
 ![Petri.jl](docs/src/assets/full-logo.png)
 
+![Documentation](https://github.com/mehalter/Petri.jl/workflows/Documentation/badge.svg)
+![Tests](https://github.com/mehalter/Petri.jl/workflows/Tests/badge.svg)
+
 A Petri net modeling framework for the Julia programming language.
 
 This package uses the ModelingToolkit framework for building embedded DSLs for mathematical computing. We represent Petri nets with `ModelingToolkit.Operation` expressions and then generate code for simulating these networks.
