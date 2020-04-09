@@ -1,4 +1,4 @@
-# Petri.jl
+![Petri.jl](assets/full-logo.png)
 
 ```@meta
 CurrentModule = Petri
