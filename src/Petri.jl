@@ -8,6 +8,10 @@ module Petri
 
 export Model, Problem, NullPetri, solve, toODE, NullPetri
 
+function funcindex!(list, key, f, vals...)
+  setindex!(list, f(getindex(list, key),vals...), key)
+end
+
 include("types.jl")
 
 """
@@ -31,22 +35,31 @@ function solve(p::AbstractProblem)
 end
 
 function validTransition(state, δ)
-  all(state[s] >= v for (s,v) in first(δ))
+  ins = first(δ)
+  all(s->getindex(state,s) >= getindex(ins,s), keys(ins))
 end
 
 function step(p::Problem, state)
-  i = rand(1:length(p.model.Δ))
-  if validTransition(state, p.model.Δ[i])
-    return apply(state, p.model.Δ[i])
+  ks = keys(p.model.Δ)
+  i = rand(1:length(ks))
+  δ = getindex(p.model.Δ, getindex(ks, i))
+  if validTransition(state, δ)
+    return apply(state, δ)
   else
     return state
   end
 end
 
 function apply(state, δ)
+  ins = first(δ)
+  outs = last(δ)
   out = deepcopy(state)
-  map(k->out[first(k)] -= last(k), collect(first(δ)))
-  map(k->out[first(k)] += last(k), collect(last(δ)))
+  for k in keys(ins)
+    funcindex!(out, k, -, getindex(ins, k))
+  end
+  for k in keys(outs)
+    funcindex!(out, k, +, getindex(outs, k))
+  end
   return out
 end
 

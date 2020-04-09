@@ -1,7 +1,7 @@
 name = "Petri"
 uuid = "4259d249-1051-49fa-8328-3f8ab9391c33"
 authors = ["Micah Halter <micah.halter@gtri.gatech.edu>", "James Fairbanks <james.fairbanks@gtri.gatech.edu>"]
-version = "0.2.0"
+version = "0.3.0"
 
 [deps]
 Catlab = "134e5e36-593f-5add-ad60-77f754baafbe"
@@ -11,8 +11,9 @@ Catlab = "<1.0"
 julia = "1.0"
 
 [extras]
+LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["OrdinaryDiffEq", "Test"]
+test = ["LabelledArrays", "OrdinaryDiffEq", "Test"]

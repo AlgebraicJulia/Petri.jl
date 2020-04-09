@@ -7,24 +7,23 @@ be passed into DifferentialEquation.jl or OrdinaryDiffEq.jl solvers
 function toODE(m::Model)
     S = m.S
     T = m.Δ
-    ϕ = zeros(Float64, length(T))
-    statepos = Dict(map(i->last(i)=>first(i),enumerate(S)))
+    ϕ = Dict()
     f(du, u, p, t) = begin
-        for (i, δ) in enumerate(T)
-            ins = first(δ)
-            ϕ[i] = reduce((x,y)->x*u[statepos[y]]/ins[y], keys(ins); init=p[i])
+        for k in keys(T)
+          ins = first(getindex(T, k))
+          setindex!(ϕ, reduce((x,y)->x*getindex(u,y)/getindex(ins,y), keys(ins); init=getindex(p, k)), k)
         end
-        for (s,i) in statepos
-            du[i] = 0
+        for s in S
+            setindex!(du, 0, s)
         end
-        for (i, δ) in enumerate(T)
-            ins = first(δ)
-            outs = last(δ)
+        for k in keys(T)
+            ins = first(getindex(T, k))
+            outs = last(getindex(T, k))
             for s in keys(ins)
-                du[statepos[s]] -= ϕ[i] * ins[s]
+              funcindex!(du, s, -, getindex(ϕ, k) * getindex(ins, s))
             end
             for s in keys(outs)
-                du[statepos[s]] += ϕ[i] * outs[s]
+              funcindex!(du, s, +, getindex(ϕ, k) * getindex(outs, s))
             end
         end
         return du

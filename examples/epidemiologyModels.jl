@@ -8,62 +8,59 @@ import Catlab.Graphics.Graphviz: Graph
 @show "SIR"
 
 S  = [:S,:I,:R]
-Δ  = [
-      (Dict(:S=>1, :I=>1), Dict(:I=>2)),
-      (Dict(:I=>1),        Dict(:R=>1)),
-     ]
-m  = Petri.Model(S, Δ)
-p  = Petri.Problem(m, Dict(:S=>100, :I=>1, :R=>0), 150)
+Δ  = LVector(
+      inf=(LVector(S=1, I=1), LVector(I=2)),
+      rec=(LVector(I=1),      LVector(R=1)),
+     )
+sir = Petri.Model(S, Δ)
 
-u0 = [10.0, 1.0, 0.0]
+u0 = LVector(S=10.0, I=1.0, R=0.0)
 tspan = (0.0,7.5)
-β = [0.4, 0.4]
+β = LVector(inf=0.4, rec=0.4)
 
-prob = ODEProblem(toODE(p.model), u0, tspan, β)
+prob = ODEProblem(toODE(sir), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
-display(plot(sol,label=reshape(p.model.S,1,:)))
-Graph(p.model)
+display(plot(sol))
+Graph(sir)
 
 @show "SEIR"
 
 S2 = [:S,:E,:I,:R]
-Δ2 = [
-     (Dict(:S=>1, :I=>1), Dict(:I=>1, :E=>1)),
-     (Dict(:E=>1),        Dict(:I=>1)),
-     (Dict(:I=>1),        Dict(:R=>1)),
-    ]
-m2 = Petri.Model(S2, Δ2)
-p2 = Petri.Problem(m2, Dict(:S=>100, :E=>1, :I=>0, :R=>0), 150)
+Δ2 = LVector(
+     exp=(LVector(S=1, I=1), LVector(I=1, E=1)),
+     inf=(LVector(E=1),      LVector(I=1)),
+     rec=(LVector(I=1),      LVector(R=1)),
+    )
+seir = Petri.Model(S2, Δ2)
 
-u0 = [10.0, 1.0, 0.0, 0.0]
+u0 = LVector(S=10.0, E=1.0, I=0.0, R=0.0)
 tspan = (0.0,15.0)
-β = [0.9, 0.2, 0.5]
+β = LVector(exp=0.9, inf=0.2, rec=0.5)
 
-prob = ODEProblem(toODE(p2.model), u0, tspan, β)
+prob = ODEProblem(toODE(seir), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
-display(plot(sol,label=reshape(p2.model.S,1,:)))
-Graph(p2.model)
+display(plot(sol))
+Graph(seir)
 
 @show "SEIRD"
 
 S3 = [:S,:E,:I,:R, :D]
-Δ3 = [
-     (Dict(:S=>1, :I=>1), Dict(:I=>1, :E=>1)),
-     (Dict(:E=>1),        Dict(:I=>1)),
-     (Dict(:I=>1),        Dict(:R=>1)),
-     (Dict(:I=>1),        Dict(:D=>1)),
-    ]
-m3 = Petri.Model(S3, Δ3)
-p3 = Petri.Problem(m3, Dict(:S=>100, :E=>1, :I=>0, :R=>0, :D=>0), 150)
+Δ3 = LVector(
+     exp=(LVector(S=1, I=1), LVector(I=1, E=1)),
+     inf=(LVector(E=1),      LVector(I=1)),
+     rec=(LVector(I=1),      LVector(R=1)),
+     die=(LVector(I=1),      LVector(D=1)),
+    )
+seird = Petri.Model(S3, Δ3)
 
-u0 = [10.0, 1.0, 0.0, 0.0, 0.0]
+u0 = LVector(S=10.0, E=1.0, I=0.0, R=0.0, D=0.0)
 tspan = (0.0,15.0)
-β = [0.9, 0.2, 0.5, 0.1]
+β = LVector(exp=0.9, inf=0.2, rec=0.5, die=0.1)
 
-prob = ODEProblem(toODE(p3.model), u0, tspan, β)
+prob = ODEProblem(toODE(seird), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
-display(plot(sol,label=reshape(p3.model.S,1,:)))
-Graph(p3.model)
+display(plot(sol))
+Graph(seird)

@@ -14,14 +14,14 @@ end
 
 # the following approach works
 S   = [:S,:I,:R]
-Δ   = [
-       (Dict(:S=>1, :I=>1), Dict(:I=>2)),
-       (Dict(:I=>1),        Dict(:R=>1)),
-      ]
+Δ   = LVector(
+       inf=(LVector(S=1, I=1), LVector(I=2)),
+       rec=(LVector(I=1),      LVector(R=1)),
+      )
 sir = Petri.Model(S, Δ)
 
-u0  = [100.0, 1, 0]
-p   = [0.35, 0.05]
+u0  = LVector(S=100.0, I=1.0, R=0.0)
+p   = LVector(inf=0.35, rec=0.05)
 t   = (0, 365.0)
 
 @info "SIR Solving"
@@ -33,8 +33,8 @@ f = toODE(sir)
 
 
 function makesolve(m, name, u0, p, t)
-    u0 = [100.0, 1, 0]
-    p = [0.35, 0.05]
+    u0 = LVector(S=100.0, I=1.0, R=0.0)
+    p = LVector(inf=0.35, rec=0.05)
     f = toODE(m)
     prob, soln = Base.invokelatest(solver1, f, u0, p, (0, 365.0))
 end
