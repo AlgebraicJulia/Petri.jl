@@ -12,8 +12,8 @@ function edgify(δ, transition, reverse::Bool)
       weight = "$(getindex(δ, k))"
       state = "$k"
       attr = Attributes(:label=>weight, :labelfontsize=>"6")
-      return Edge(reverse ? ["$transition", "$state"] :
-                            ["$state", "$transition"], attr)
+      return Edge(reverse ? ["T_$transition", "S_$state"] :
+                            ["S_$state", "T_$transition"], attr)
     end
 end
 
@@ -24,8 +24,8 @@ convert a Model into a GraphViz Graph. Transition are green boxes and states are
 """
 function Graph(model::Model)
     ks = collect(keys(model.Δ))
-    statenodes = [Node(string("$s"), Attributes(:shape=>"circle", :color=>"dodgerblue2")) for s in model.S]
-    transnodes = [Node(string("$k"), Attributes(:shape=>"square", :color=>"forestgreen")) for k in ks]
+    statenodes = [Node(string("S_$s"), Attributes(:shape=>"circle", :color=>"dodgerblue2")) for s in model.S]
+    transnodes = [Node(string("T_$k"), Attributes(:shape=>"square", :color=>"forestgreen")) for k in ks]
 
     stmts = vcat(statenodes, transnodes)
     edges = map(ks) do k
