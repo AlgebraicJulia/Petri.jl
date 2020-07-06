@@ -1,7 +1,7 @@
 name = "Petri"
 uuid = "4259d249-1051-49fa-8328-3f8ab9391c33"
 authors = ["Micah Halter <micah.halter@gtri.gatech.edu>", "James Fairbanks <james.fairbanks@gtri.gatech.edu>"]
-version = "0.3.2"
+version = "0.3.3"
 
 [deps]
 AutoHashEquals = "15f4f7f2-30c1-5605-9d31-71845cf9641f"
