@@ -12,6 +12,8 @@ represented by states and transition functions
   Δ::D  # transition function
 end
 
+Model(s::S, Δ) where S<:UnitRange = Model(collect(s), Δ)
+
 function ==(x::Petri.Model,y::Petri.Model)
   return x.S == y.S && x.Δ == y.Δ
 end
