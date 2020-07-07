@@ -1,17 +1,20 @@
+valueat(x::Number, t) = x
+valueat(f::Function, t) = f(t)
+
 """
-    toODE(m::Model)
+    vectorfields(m::Model)
 
 Convert a petri model into a differential equation function that can
 be passed into DifferentialEquation.jl or OrdinaryDiffEq.jl solvers
 """
-function toODE(m::Model)
+function vectorfields(m::Model)
     S = m.S
     T = m.Δ
     ϕ = Dict()
     f(du, u, p, t) = begin
         for k in keys(T)
           ins = first(getindex(T, k))
-          setindex!(ϕ, reduce((x,y)->x*getindex(u,y)/getindex(ins,y), keys(ins); init=getindex(p, k)), k)
+          setindex!(ϕ, reduce((x,y)->x*getindex(u,y)/getindex(ins,y), keys(ins); init=valueat(getindex(p, k),t)), k)
         end
         for s in S
             setindex!(du, 0, s)

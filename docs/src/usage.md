@@ -29,7 +29,7 @@ u0 = LVector(S=100.0, I=1, R=0)
 p = LVector(inf=0.05, rec=0.35)
 
 # evaluate the expression to create a runnable function
-f = toODE(sir)
+f = vectorfields(sir)
 
 # this is regular OrdinaryDiffEq problem setup
 prob = ODEProblem(f,u0,(0.0,365.0),p)
@@ -55,7 +55,7 @@ seir = Petri.Model([:S,:E,:I,:R],LVector(
                                     rec=(LVector(I=1),     LVector(R=1))))
 u0 = LVector(S=100.0, E=1, I=0, R=0)
 p = (exp=0.35, inf=0.05, rec=0.05)
-f = toODE(seir)
+f = vectorfields(seir)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = OrdinaryDiffEq.solve(prob,Tsit5())
 plt = plot(sol)
@@ -75,7 +75,7 @@ seirs = Petri.Model([:S,:E,:I,:R],LVector(
                                     deg=(LVector(R=1),     LVector(S=1))))
 u0 = LVector(S=100.0, E=1, I=0, R=0)
 p = LVector(exp=0.35, inf=0.05, rec=0.07, deg=0.3)
-f = toODE(seirs)
+f = vectorfields(seirs)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = OrdinaryDiffEq.solve(prob,Tsit5())
 plt = plot(sol)

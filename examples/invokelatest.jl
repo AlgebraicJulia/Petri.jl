@@ -1,5 +1,5 @@
 using Petri
-import Petri: toODE
+import Petri: vectorfields
 using OrdinaryDiffEq
 import OrdinaryDiffEq: solve
 using Test
@@ -25,7 +25,7 @@ p   = LVector(inf=0.35, rec=0.05)
 t   = (0, 365.0)
 
 @info "SIR Solving"
-f = toODE(sir)
+f = vectorfields(sir)
 @time prob, soln = solver1(f, u0, p, t)
 @time prob, soln = solver1(f, u0, p, t)
 
@@ -35,7 +35,7 @@ f = toODE(sir)
 function makesolve(m, name, u0, p, t)
     u0 = LVector(S=100.0, I=1.0, R=0.0)
     p = LVector(inf=0.35, rec=0.05)
-    f = toODE(m)
+    f = vectorfields(m)
     prob, soln = Base.invokelatest(solver1, f, u0, p, (0, 365.0))
 end
 

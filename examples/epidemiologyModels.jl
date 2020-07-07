@@ -18,7 +18,7 @@ u0 = LVector(S=10.0, I=1.0, R=0.0)
 tspan = (0.0,7.5)
 β = LVector(inf=0.4, rec=0.4)
 
-prob = ODEProblem(toODE(sir), u0, tspan, β)
+prob = ODEProblem(vectorfields(sir), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
 display(plot(sol))
@@ -38,7 +38,7 @@ u0 = LVector(S=10.0, E=1.0, I=0.0, R=0.0)
 tspan = (0.0,15.0)
 β = LVector(exp=0.9, inf=0.2, rec=0.5)
 
-prob = ODEProblem(toODE(seir), u0, tspan, β)
+prob = ODEProblem(vectorfields(seir), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
 display(plot(sol))
@@ -59,7 +59,7 @@ u0 = LVector(S=10.0, E=1.0, I=0.0, R=0.0, D=0.0)
 tspan = (0.0,15.0)
 β = LVector(exp=0.9, inf=0.2, rec=0.5, die=0.1)
 
-prob = ODEProblem(toODE(seird), u0, tspan, β)
+prob = ODEProblem(vectorfields(seird), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
 display(plot(sol))
