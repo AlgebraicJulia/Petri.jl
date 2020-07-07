@@ -1,3 +1,6 @@
+valueat(x::Number, t) = x
+valueat(f::Function, t) = f(t)
+
 """
     toODE(m::Model)
 
@@ -11,7 +14,7 @@ function toODE(m::Model)
     f(du, u, p, t) = begin
         for k in keys(T)
           ins = first(getindex(T, k))
-          setindex!(ϕ, reduce((x,y)->x*getindex(u,y)/getindex(ins,y), keys(ins); init=getindex(p, k)), k)
+          setindex!(ϕ, reduce((x,y)->x*getindex(u,y)/getindex(ins,y), keys(ins); init=valueat(getindex(p, k),t)), k)
         end
         for s in S
             setindex!(du, 0, s)
