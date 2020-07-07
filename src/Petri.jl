@@ -6,7 +6,7 @@ Provides a modeling framework for representing and solving stochastic petri nets
 """
 module Petri
 
-export Model, Problem, NullPetri, solve, toODE, NullPetri
+export Model, Problem, NullPetri, solve, vectorfields, NullPetri
 
 function funcindex!(list, key, f, vals...)
   setindex!(list, f(getindex(list, key),vals...), key)
@@ -63,7 +63,7 @@ function apply(state, δ)
   return out
 end
 
-include("ode.jl")
+include("vectorfields.jl")
 include("visualization.jl")
 
 end #Module

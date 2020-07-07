@@ -2,12 +2,12 @@ valueat(x::Number, t) = x
 valueat(f::Function, t) = f(t)
 
 """
-    toODE(m::Model)
+    vectorfields(m::Model)
 
 Convert a petri model into a differential equation function that can
 be passed into DifferentialEquation.jl or OrdinaryDiffEq.jl solvers
 """
-function toODE(m::Model)
+function vectorfields(m::Model)
     S = m.S
     T = m.Δ
     ϕ = Dict()
