@@ -16,7 +16,7 @@ u0 = LVector(S=100.0, I=1, R=0)
 p = LVector(inf=0.05, rec=0.35)
 
 # evaluate the expression to create a runnable function
-f = toODE(sir)
+f = vectorfields(sir)
 
 # this is regular OrdinaryDiffEq problem setup
 prob = ODEProblem(f,u0,(0.0,365.0),p)
@@ -32,7 +32,7 @@ plt = plot(sol)</code></pre><p><img src="../img/sir_sol.png" alt="A solution to 
                                     rec=(LVector(I=1),     LVector(R=1))))
 u0 = LVector(S=100.0, E=1, I=0, R=0)
 p = (exp=0.35, inf=0.05, rec=0.05)
-f = toODE(seir)
+f = vectorfields(seir)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = OrdinaryDiffEq.solve(prob,Tsit5())
 plt = plot(sol)</code></pre><p><img src="../img/seir_sol.png" alt="A solution to the SEIR model system"/></p><p>The previous models have transitory behavior, the infection spreads and then terminates as you end up with no infected people in the population. The following <code>SEIRS</code> model has a non-trivial steady state, because recovered people lose their immunity and become susceptible again.</p><p><img src="../img/seirs.png" alt="The SEIRS model system shown as a Petri net"/></p><pre><code class="language-julia">seirs = Petri.Model([:S,:E,:I,:R],LVector(
@@ -42,7 +42,7 @@ plt = plot(sol)</code></pre><p><img src="../img/seir_sol.png" alt="A solution to
                                     deg=(LVector(R=1),     LVector(S=1))))
 u0 = LVector(S=100.0, E=1, I=0, R=0)
 p = LVector(exp=0.35, inf=0.05, rec=0.07, deg=0.3)
-f = toODE(seirs)
+f = vectorfields(seirs)
 prob = ODEProblem(f,u0,(0.0,365.0),p)
 sol = OrdinaryDiffEq.solve(prob,Tsit5())
-plt = plot(sol)</code></pre><p><img src="../img/seirs_sol.png" alt="A solution to the SEIRS model system"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Petri.jl</a><a class="docs-footer-nextpage" href="../api/">Library Reference »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 7 July 2020 00:00">Tuesday 7 July 2020</span>. Using Julia version 1.4.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
+plt = plot(sol)</code></pre><p><img src="../img/seirs_sol.png" alt="A solution to the SEIRS model system"/></p></article><nav class="docs-footer"><a class="docs-footer-prevpage" href="../">« Petri.jl</a><a class="docs-footer-nextpage" href="../api/">Library Reference »</a></nav></div><div class="modal" id="documenter-settings"><div class="modal-background"></div><div class="modal-card"><header class="modal-card-head"><p class="modal-card-title">Settings</p><button class="delete"></button></header><section class="modal-card-body"><p><label class="label">Theme</label><div class="select"><select id="documenter-themepicker"><option value="documenter-light">documenter-light</option><option value="documenter-dark">documenter-dark</option></select></div></p><hr/><p>This document was generated with <a href="https://github.com/JuliaDocs/Documenter.jl">Documenter.jl</a> on <span class="colophon-date" title="Tuesday 7 July 2020 15:54">Tuesday 7 July 2020</span>. Using Julia version 1.4.2.</p></section><footer class="modal-card-foot"></footer></div></div></div></body></html>
