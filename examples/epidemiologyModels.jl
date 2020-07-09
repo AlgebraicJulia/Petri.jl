@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 using Petri
+using LabelledArrays
 using OrdinaryDiffEq
+using StochasticDiffEq
 using Plots
 using Catlab.Graphics.Graphviz
 import Catlab.Graphics.Graphviz: Graph
@@ -17,6 +19,24 @@ sir = Petri.Model(S, Δ)
 u0 = LVector(S=10.0, I=1.0, R=0.0)
 tspan = (0.0,7.5)
 β = LVector(inf=0.4, rec=0.4)
+
+
+nu, noise = stochasticmodel(sir)
+prob_sde = SDEProblem(vectorfields(sir),noise,u0,tspan,β,noise_rate_prototype=nu)
+
+function condition(u,t,integrator) # Event when event_f(u,t) == 0
+     u[2]
+end
+function affect!(integrator)
+     integrator.u[2] = 0.0
+end
+cb = ContinuousCallback(condition,affect!)
+
+sol_sde = StochasticDiffEq.solve(prob_sde,SRA1(),callback=cb)
+
+plot(sol_sde)
+
+
 
 prob = ODEProblem(vectorfields(sir), u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)

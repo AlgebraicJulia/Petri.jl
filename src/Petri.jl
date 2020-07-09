@@ -6,7 +6,7 @@ Provides a modeling framework for representing and solving stochastic petri nets
 """
 module Petri
 
-export Model, Problem, NullPetri, solve, vectorfields, NullPetri
+export Model, Problem, NullPetri, solve, vectorfields, stochasticmodel, NullPetri
 
 function funcindex!(list, key, f, vals...)
   setindex!(list, f(getindex(list, key),vals...), key)
