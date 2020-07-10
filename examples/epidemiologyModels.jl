@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 using Petri
+using LabelledArrays
+using StochasticDiffEq
 using OrdinaryDiffEq
 using Plots
 using Catlab.Graphics.Graphviz
@@ -18,10 +20,18 @@ u0 = LVector(S=10.0, I=1.0, R=0.0)
 tspan = (0.0,7.5)
 β = LVector(inf=0.4, rec=0.4)
 
-prob = ODEProblem(vectorfields(sir), u0, tspan, β)
+
+prob, cb = SDEProblem(sir, u0, tspan, β)
+
+sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
+
+plot(sol)
+
+prob = ODEProblem(sir, u0, tspan, β)
 sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
 
-display(plot(sol))
+plot(sol)
+
 Graph(sir)
 
 @show "SEIR"
@@ -38,10 +48,11 @@ u0 = LVector(S=10.0, E=1.0, I=0.0, R=0.0)
 tspan = (0.0,15.0)
 β = LVector(exp=0.9, inf=0.2, rec=0.5)
 
-prob = ODEProblem(vectorfields(seir), u0, tspan, β)
-sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
+prob, cb = SDEProblem(seir, u0, tspan, β)
+sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
 
-display(plot(sol))
+plot(sol)
+
 Graph(seir)
 
 @show "SEIRD"
@@ -59,8 +70,9 @@ u0 = LVector(S=10.0, E=1.0, I=0.0, R=0.0, D=0.0)
 tspan = (0.0,15.0)
 β = LVector(exp=0.9, inf=0.2, rec=0.5, die=0.1)
 
-prob = ODEProblem(vectorfields(seird), u0, tspan, β)
-sol = OrdinaryDiffEq.solve(prob,Tsit5(),reltol=1e-8,abstol=1e-8)
+prob, cb = SDEProblem(seird, u0, tspan, β)
+sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
 
-display(plot(sol))
+plot(sol)
+
 Graph(seird)
