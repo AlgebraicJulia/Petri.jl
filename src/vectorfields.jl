@@ -1,3 +1,9 @@
+using OrdinaryDiffEq
+using StochasticDiffEq
+
+import OrdinaryDiffEq: ODEProblem
+import StochasticDiffEq: SDEProblem
+
 valueat(x::Number, t) = x
 valueat(f::Function, t) = f(t)
 
@@ -34,7 +40,17 @@ function vectorfields(m::Model)
     return f
 end
 
-function stochasticmodel(m::Model)
+function ODEProblem(m::Model,u0,tspan,β)
+  return ODEProblem(vectorfields(m), u0, tspan, β)
+end
+
+function statecb(s)
+     cond = (u,t,integrator) -> u[s]
+     aff = (integrator) -> integrator.u[s] = 0.0
+     return ContinuousCallback(cond, aff)
+end
+
+function SDEProblem(m::Model,u0,tspan,β)
     S = m.S
     T = m.Δ
     ϕ = Dict()
@@ -51,15 +67,15 @@ function stochasticmodel(m::Model)
       end
     end
     noise(du, u, p, t) = begin
+        sum_u = sum(u)
         for k in keys(T)
           ins = first(getindex(T, k))
-          ϕ[k] = reduce((x,y)->x*getindex(u,y)/getindex(ins,y), keys(ins); init=valueat(getindex(p, k),t))
+          ϕ[k] = reduce((x,y)->x*getindex(u,y)/(sum_u*getindex(ins,y)), keys(ins); init=valueat(getindex(p, k),t))
         end
 
         for k in keys(T)
           l,r = getindex(T, k)
-          rate = getindex(ϕ, k)
-          rate = rate < 0 ? 0 : sqrt(rate)
+          rate = sqrt(abs(getindex(ϕ, k)))
           for i in keys(l)
             du[Spos[i],Tpos[k]] = -rate
           end
@@ -69,5 +85,7 @@ function stochasticmodel(m::Model)
         end
         return du
     end
-    return nu, noise
+    prob_sde = SDEProblem(vectorfields(m),noise,u0,tspan,β,noise_rate_prototype=nu)
+    cb = CallbackSet([statecb(s) for s in S]...)
+    return prob_sde, cb
 end
