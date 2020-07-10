@@ -14,21 +14,9 @@ end
 
 Model(s::S, Δ) where S<:UnitRange = Model(collect(s), Δ)
 
-function ==(x::Petri.Model,y::Petri.Model)
-  return x.S == y.S && x.Δ == y.Δ
-end
-
-abstract type AbstractProblem end
-
 """
-    Problem{M<:Model, S, N}
+    NullPetri(n::Int)
 
-Structure for representing a petri net problem
-
-represented by a petri net model, initial state, and number of steps
+create a Petri net of ``n`` states with no transitions
 """
-struct Problem{M<:Model, S, N} <: AbstractProblem
-  model::M
-  initial::S
-  steps::N
-end
+NullPetri(n::Int) = Model(collect(1:n), Vector{Tuple{Dict{Int, Number},Dict{Int, Number}}}())

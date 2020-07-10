@@ -20,6 +20,4 @@ using LabelledArrays
     @test seir != y
 end
 
-include("stochastic.jl")
-
-include("vectorfields.jl")
+include("solvers.jl")
