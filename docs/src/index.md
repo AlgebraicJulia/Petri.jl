@@ -13,13 +13,3 @@ CurrentModule = Petri
 There are operations that are easy to do on the `Petri.Model` like "add a transition from R to S" that require simultaneously changing multiple parts of the algebraic formulation. Applied Category Theory gives a sound theoretical framework for manipulating Petri Nets as a model of chemical reactions. `Petri` is a Julia package primarily intended to investigate how we can operationalize this theory into practical scientific software.
 
 See [AlgebraicPetri.jl](https://github.com/AlgebraicJulia/AlgebraicPetri.jl) for tools that work with Petri net models and manipulating them with higher level APIs based on ACT.
-
-## Table of Contents
-
-```@contents
-Pages = [
-    "usage.md",
-    "api.md"
-    ]
-Depth = 2
-```
