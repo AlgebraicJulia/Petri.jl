@@ -8,7 +8,7 @@ using StochasticDiffEq
     sir = Petri.Model([:S,:I,:R],[(LVector(S=1,I=1), LVector(I=2)),
                                   (LVector(I=1),     LVector(R=1))])
 
-    sirf = vectorfields(sir)
+    sirf = vectorfield(sir)
     @test sirf(LVector(S=0.0, I=0.0, R=0.0), LVector(S=100.0,I=1.0,R=0.0), [0.35,0.05],0.0) == LVector(S=-35.0,I=34.95,R=0.05)
 end
 

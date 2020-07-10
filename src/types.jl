@@ -19,4 +19,11 @@ Model(s::S, Δ) where S<:UnitRange = Model(collect(s), Δ)
 
 create a Petri net of ``n`` states with no transitions
 """
-NullPetri(n::Int) = Model(collect(1:n), Vector{Tuple{Dict{Int, Number},Dict{Int, Number}}}())
+const NullPetri = Model(Int[], Vector{Tuple{Dict{Int, Number},Dict{Int, Number}}}())
+
+"""
+    NullPetri(n::Int)
+
+create a Petri net of ``n`` states with no transitions
+"""
+EmptyPetri(n::Int) = Model(collect(1:n), Vector{Tuple{Dict{Int, Number},Dict{Int, Number}}}())

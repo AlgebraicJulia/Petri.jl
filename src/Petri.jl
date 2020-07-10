@@ -6,7 +6,7 @@ Provides a modeling framework for representing and solving stochastic petri nets
 """
 module Petri
 
-export Model, Problem, NullPetri, vectorfields, Graph
+export Model, Problem, NullPetri, EmptyPetri, vectorfield, Graph
 
 include("types.jl")
 include("solvers.jl")

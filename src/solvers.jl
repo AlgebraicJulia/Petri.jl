@@ -8,12 +8,12 @@ funcindex!(list, key, f, vals...) = list[key] = f(list[key],vals...)
 valueat(x::Number, t) = x
 valueat(f::Function, t) = f(t)
 
-""" vectorfields(m::Model)
+""" vectorfield(m::Model)
 
 Convert a petri model into a differential equation function that can
 be passed into DifferentialEquation.jl or OrdinaryDiffEq.jl solvers
 """
-function vectorfields(m::Model)
+function vectorfield(m::Model)
     S = m.S
     T = m.Δ
     ϕ = Dict()
@@ -44,7 +44,7 @@ end
 
 Generate an OrdinaryDiffEq ODEProblem
 """
-ODEProblem(m::Model, u0, tspan, β) = ODEProblem(vectorfields(m), u0, tspan, β)
+ODEProblem(m::Model, u0, tspan, β) = ODEProblem(vectorfield(m), u0, tspan, β)
 
 function statecb(s)
      cond = (u,t,integrator) -> u[s]
@@ -91,6 +91,6 @@ function SDEProblem(m::Model, u0, tspan, β)
         end
         return du
     end
-    return SDEProblem(vectorfields(m),noise,u0,tspan,β,noise_rate_prototype=nu),
+    return SDEProblem(vectorfield(m),noise,u0,tspan,β,noise_rate_prototype=nu),
            CallbackSet([statecb(s) for s in S]...)
 end
