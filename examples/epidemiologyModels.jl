@@ -4,8 +4,6 @@ using LabelledArrays
 using StochasticDiffEq
 using OrdinaryDiffEq
 using Plots
-using Catlab.Graphics.Graphviz
-import Catlab.Graphics.Graphviz: Graph
 
 @show "SIR"
 

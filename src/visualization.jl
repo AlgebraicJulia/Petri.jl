@@ -9,7 +9,7 @@ edge_attrs  = Attributes(:splines=>"splines")
 function edgify(δ, transition, reverse::Bool)
     attr = Attributes()
     return map(collect(keys(δ))) do k
-      weight = "$(getindex(δ, k))"
+      weight = "$(δ[k])"
       state = "$k"
       attr = Attributes(:label=>weight, :labelfontsize=>"6")
       return Edge(reverse ? ["T_$transition", "S_$state"] :
@@ -29,8 +29,8 @@ function Graph(model::Model)
 
     stmts = vcat(statenodes, transnodes)
     edges = map(ks) do k
-      vcat(edgify(first(getindex(model.Δ, k)), k, false),
-           edgify(last(getindex(model.Δ, k)), k, true))
+      vcat(edgify(first(model.Δ[k]), k, false),
+           edgify(last(model.Δ[k]), k, true))
     end |> flatten |> collect
     stmts = vcat(stmts, edges)
     g = Graphviz.Graph("G", true, stmts, graph_attrs, node_attrs,edge_attrs)
