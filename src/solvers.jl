@@ -4,7 +4,7 @@ using StochasticDiffEq
 import OrdinaryDiffEq: ODEProblem
 import StochasticDiffEq: SDEProblem
 
-funcindex!(list, key, f, vals...) = setindex!(list, f(getindex(list, key),vals...), key)
+funcindex!(list, key, f, vals...) = list[key] = f(list[key],vals...)
 valueat(x::Number, t) = x
 valueat(f::Function, t) = f(t)
 

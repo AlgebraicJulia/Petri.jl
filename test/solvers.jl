@@ -63,9 +63,9 @@ end
         p = [0.35, 0.05]
         prob,cb = SDEProblem(sir,u0,(0.0,365.0),p)
         sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
-        @test sol[end].S < 1
-        @test sol[end].I < 1
-        @test sol[end].R > 99
+        @test sol[end].S < 1.1
+        @test sol[end].I < 1.1
+        @test sol[end].R > 98.9
     end
 
     @testset "SEIR Solving" begin
@@ -76,10 +76,10 @@ end
         p = LVector(exp=0.35, inf=0.05, rec=0.05)
         prob,cb = SDEProblem(seir,u0,(0.0,365.0),p)
         sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
-        @test sol[end].S < 1
-        @test sol[end].E < 1
-        @test sol[end].I < 1
-        @test sol[end].R > 99
+        @test sol[end].S < 1.1
+        @test sol[end].E < 1.1
+        @test sol[end].I < 1.1
+        @test sol[end].R > 98.9
     end
 
     @testset "SEIRS Solving" begin
@@ -91,9 +91,9 @@ end
         p = LVector(exp=0.3, inf=0.4, rec=0.01, deg=0.01)
         prob,cb = SDEProblem(seirs,u0,(0.0,60.0),p)
         sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
-        @test sol[end].S < 1
-        @test sol[end].E < 1
-        @test sol[end].I > 60
-        @test sol[end].R > 30
+        @test sol[end].S < 1.1
+        @test sol[end].E < 1.1
+        @test sol[end].I > 59.9
+        @test sol[end].R > 29.9
     end
 end

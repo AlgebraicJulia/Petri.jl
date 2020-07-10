@@ -16,7 +16,6 @@ using Petri
 using LabelledArrays
 using OrdinaryDiffEq
 using Plots
-using Catlab.Graphics.Graphiz: Graph
 ```
 
 The SIR model represents the epidemiological dynamics of an infectious disease that causes immunity in its victims. There are three *states:* `Suceptible ,Infected, Recovered`. These states interact through two *transitions*. Infection has the form `S+I -> 2I` where a susceptible person meets an infected person and results in two infected people. The second transition is recovery `I -> R` where an infected person recovers spontaneously.
