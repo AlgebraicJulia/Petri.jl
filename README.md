@@ -2,7 +2,7 @@
 
 [![Documentation](https://github.com/mehalter/Petri.jl/workflows/Documentation/badge.svg)](https://mehalter.github.io/Petri.jl/stable/)
 ![Tests](https://github.com/mehalter/Petri.jl/workflows/Tests/badge.svg)
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3799900.svg)](https://doi.org/10.5281/zenodo.3799900)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.3939027.svg)](https://doi.org/10.5281/zenodo.3939027)
 
 
 `Petri.jl` is a Petri net modeling framework for the Julia programming language.
