@@ -43,9 +43,9 @@ end
         prob,cb = SDEProblem(sir,u0,(0.0,40.0),p)
         sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
         @test sum(sol[end]) ≈ 1000 atol=1e-3
-        @test sol[end].S ≈ 186.054 atol=1e-3
-        @test sol[end].I ≈ 13.447 atol=1e-3
-        @test sol[end].R ≈ 800.499 atol=1e-3
+        @test sol[end].S ≈ 200.849 atol=1e-3
+        @test sol[end].I ≈ 13.253 atol=1e-3
+        @test sol[end].R ≈ 785.898 atol=1e-3
     end
 end
 
