@@ -3,6 +3,7 @@ using OrdinaryDiffEq
 using SteadyStateDiffEq
 using StochasticDiffEq
 using DiffEqJump
+using SparseArrays
 
 import OrdinaryDiffEq: ODEProblem
 import SteadyStateDiffEq: SteadyStateProblem
@@ -74,7 +75,7 @@ function SDEProblem(m::Model, u0, tspan, β)
     ϕ = Dict()
     Spos = Dict(S[k]=>k for k in keys(S))
     Tpos = Dict(keys(T)[k]=>k for k in keys(keys(T)))
-    nu = zeros(Float64, length(S), length(T))
+    nu = spzeros(Float64, length(S), length(T))
     for k in keys(T)
       l,r = T[k]
       for i in keys(l)

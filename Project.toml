@@ -9,6 +9,7 @@ Catlab = "134e5e36-593f-5add-ad60-77f754baafbe"
 DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
 DiffEqJump = "c894b116-72e5-5b58-be3c-e6d8d4ac2b12"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+SparseArrays = "2f01184e-e22b-5df5-ae63-d93ebab69eaf"
 SteadyStateDiffEq = "9672c7b4-1e72-59bd-8a11-6ac3964bc41f"
 StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 
