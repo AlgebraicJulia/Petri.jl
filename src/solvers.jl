@@ -1,12 +1,20 @@
+using DiffEqBase
 using OrdinaryDiffEq
+using SteadyStateDiffEq
 using StochasticDiffEq
+using DiffEqJump
 
 import OrdinaryDiffEq: ODEProblem
+import SteadyStateDiffEq: SteadyStateProblem
 import StochasticDiffEq: SDEProblem
+import DiffEqJump: JumpProblem
 
 funcindex!(list, key, f, vals...) = list[key] = f(list[key],vals...)
 valueat(x::Number, t) = x
 valueat(f::Function, t) = f(t)
+transitionrate(S, T, k, rate, t) = exp(reduce((x,y)->x+log(S[y] <= 0 ? 0 : S[y]),
+                                       keys(first(T[k]));
+                                       init=log(valueat(rate[k],t))))
 
 """ vectorfield(m::Model)
 
@@ -19,20 +27,18 @@ function vectorfield(m::Model)
     ϕ = Dict()
     f(du, u, p, t) = begin
         for k in keys(T)
-          ins = first(T[k])
-          ϕ[k] = reduce((x,y)->x*u[y]/ins[y], keys(ins); init=valueat(p[k],t))
+          ϕ[k] = transitionrate(u, T, k, p, t)
         end
         for s in S
           du[s] = 0
         end
         for k in keys(T)
-            ins = first(T[k])
-            outs = last(T[k])
-            for s in keys(ins)
-              funcindex!(du, s, -, ϕ[k] * ins[s])
+            l,r = T[k]
+            for s in keys(l)
+              funcindex!(du, s, -, ϕ[k] * l[s])
             end
-            for s in keys(outs)
-              funcindex!(du, s, +, ϕ[k] * outs[s])
+            for s in keys(r)
+              funcindex!(du, s, +, ϕ[k] * r[s])
             end
         end
         return du
@@ -45,6 +51,12 @@ end
 Generate an OrdinaryDiffEq ODEProblem
 """
 ODEProblem(m::Model, u0, tspan, β) = ODEProblem(vectorfield(m), u0, tspan, β)
+
+""" SteadyStateProblem(m::Model, u0, tspan, β)
+
+Generate an SteadyStateDiffEq SteadyStateProblem
+"""
+SteadyStateProblem(m::Model, u0, tspan, β) = SteadyStateProblem(ODEProblem(m, u0, tspan, β))
 
 function statecb(s)
      cond = (u,t,integrator) -> u[s]
@@ -76,7 +88,7 @@ function SDEProblem(m::Model, u0, tspan, β)
         sum_u = sum(u)
         for k in keys(T)
           ins = first(T[k])
-          ϕ[k] = reduce((x,y)->x*u[y]/(sum_u*ins[y]), keys(ins); init=valueat(p[k],t))
+          ϕ[k] = transitionrate(u, T, k, p, t)
         end
 
         for k in keys(T)
@@ -93,4 +105,30 @@ function SDEProblem(m::Model, u0, tspan, β)
     end
     return SDEProblem(vectorfield(m),noise,u0,tspan,β,noise_rate_prototype=nu),
            CallbackSet([statecb(s) for s in S]...)
+end
+
+jumpTransitionRate(T, k) = (u,p,t) -> transitionrate(u, T, k, p, t)
+
+function jumpTransitionFunction(t)
+  return (integrator) -> begin
+    l,r = t
+    for i in keys(l)
+      integrator.u[i] -= l[i]
+    end
+    for i in keys(r)
+      integrator.u[i] += r[i]
+    end
+  end
+end
+
+""" JumpProblem(m::Model, u0, tspan, β)
+
+Generate an DiffEqJump JumpProblem
+"""
+function JumpProblem(m::Model, u0, tspan, β)
+  T = m.Δ
+  prob = DiscreteProblem(u0, tspan, β)
+  return JumpProblem(prob, Direct(), [ConstantRateJump(jumpTransitionRate(T, k),
+                                                       jumpTransitionFunction(T[k])
+                                                      ) for k in keys(T)]...)
 end
