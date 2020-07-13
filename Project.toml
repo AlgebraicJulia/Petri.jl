@@ -1,25 +1,31 @@
 name = "Petri"
 uuid = "4259d249-1051-49fa-8328-3f8ab9391c33"
 authors = ["Micah Halter <micah.halter@gtri.gatech.edu>", "James Fairbanks <james.fairbanks@gtri.gatech.edu>"]
-version = "1.0.0"
+version = "1.1.0"
 
 [deps]
 AutoHashEquals = "15f4f7f2-30c1-5605-9d31-71845cf9641f"
 Catlab = "134e5e36-593f-5add-ad60-77f754baafbe"
+DiffEqBase = "2b5f629d-d688-5b77-993f-72d75c75574e"
+DiffEqJump = "c894b116-72e5-5b58-be3c-e6d8d4ac2b12"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+SteadyStateDiffEq = "9672c7b4-1e72-59bd-8a11-6ac3964bc41f"
 StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 
 [compat]
-AutoHashEquals = "<1.0"
-Catlab = "<1.0"
-OrdinaryDiffEq = "<6.0"
-StochasticDiffEq = "<7.0"
+AutoHashEquals = "^0.2.0"
+Catlab = "^0.7.0"
+DiffEqBase = "^6.40.0"
+DiffEqJump = "^6.9.0"
+OrdinaryDiffEq = "^5.41.0"
+SteadyStateDiffEq = "^1.5.0"
+StochasticDiffEq = "^6.24.0"
 julia = "1.0"
 
 [extras]
 LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
-OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
+Random = "9a3f8284-a2c9-5f02-9a11-845980a1fd5c"
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
 
 [targets]
-test = ["LabelledArrays", "OrdinaryDiffEq", "Test"]
+test = ["LabelledArrays", "Random", "Test"]

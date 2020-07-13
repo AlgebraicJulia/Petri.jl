@@ -1,4 +1,5 @@
 [deps]
+DiffEqJump = "c894b116-72e5-5b58-be3c-e6d8d4ac2b12"
 LabelledArrays = "2ee39098-c373-598a-b85f-a56591580800"
 OrdinaryDiffEq = "1dea7af3-3e70-54e6-95c3-0bf5283fa5ed"
 Petri = "4259d249-1051-49fa-8328-3f8ab9391c33"
