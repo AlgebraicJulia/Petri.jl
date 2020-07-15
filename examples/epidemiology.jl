@@ -48,7 +48,7 @@ plot(sol)
 # StochasticDiffEq solvers
 
 prob, cb = SDEProblem(sir, u0, tspan, β)
-sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
+sol = StochasticDiffEq.solve(prob,LambaEM(),callback=cb)
 
 plot(sol)
 
@@ -77,7 +77,7 @@ tspan = (0.0,40.0)
 β = LVector(exp=0.7/sum(u0), inf=0.5, rec=0.25)
 
 prob, cb = SDEProblem(seir, u0, tspan, β)
-sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
+sol = StochasticDiffEq.solve(prob,LambaEM(),callback=cb)
 
 plot(sol)
 
@@ -99,6 +99,6 @@ tspan = (0.0,40.0)
 β = LVector(exp=0.9/sum(u0), inf=0.9, rec=0.25, die=0.03)
 
 prob, cb = SDEProblem(seird, u0, tspan, β)
-sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
+sol = StochasticDiffEq.solve(prob,LambaEM(),callback=cb)
 
 plot(sol)
