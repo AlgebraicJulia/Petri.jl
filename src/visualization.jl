@@ -33,6 +33,6 @@ function Graph(model::Model)
            edgify(last(model.Δ[k]), k, true))
     end |> flatten |> collect
     stmts = vcat(stmts, edges)
-    g = Graphviz.Graph("G", true, "dot", stmts, graph_attrs, node_attrs,edge_attrs)
+    g = Graphviz.Digraph("G", stmts; graph_attrs=graph_attrs, node_attrs=node_attrs, edge_attrs=edge_attrs)
     return g
 end
