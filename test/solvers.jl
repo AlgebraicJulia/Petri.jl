@@ -14,8 +14,8 @@ Random.seed!(1234);
 
     sirf = vectorfield(sir)
     rates = sirf(LVector(S=0.0, I=0.0, R=0.0), LVector(S=100.0,I=1.0,R=0.0), [0.5/101,0.25],0.0)
-    @test rates.S ≈ -.495 atol=1e-3
-    @test rates.I ≈ .24505 atol=1e-5
+    @test rates.S ≈ -.495 atol=1e-2
+    @test rates.I ≈ .24505 atol=1e-2
     @test rates.R ≈ .25 atol=1e-2
 end
 
@@ -27,10 +27,10 @@ end
         p = [0.5/sum(u0), 0.25]
         prob = ODEProblem(sir,u0,(0.0,40.0),p)
         sol = OrdinaryDiffEq.solve(prob,Tsit5())
-        @test sum(sol[end]) ≈ 1000 atol=1e-3
-        @test sol[end].S ≈ 209.843 atol=1e-3
-        @test sol[end].I ≈ 14.474 atol=1e-3
-        @test sol[end].R ≈ 775.684 atol=1e-3
+        @test sum(sol[end]) ≈ 1000 atol=1
+        @test sol[end].S ≈ 210 atol=1
+        @test sol[end].I ≈ 14.5 atol=1
+        @test sol[end].R ≈ 775.5 atol=1
     end
 end
 
@@ -42,10 +42,10 @@ end
         p = [0.5/sum(u0), 0.25]
         prob,cb = SDEProblem(sir,u0,(0.0,40.0),p)
         sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
-        @test sum(sol[end]) ≈ 1000 atol=1e-3
-        @test sol[end].S ≈ 200.849 atol=1e-3
-        @test sol[end].I ≈ 13.253 atol=1e-3
-        @test sol[end].R ≈ 785.898 atol=1e-3
+        @test sum(sol[end]) ≈ 1000 atol=1
+        @test sol[end].S ≈ 201 atol=1
+        @test sol[end].I ≈ 13 atol=1
+        @test sol[end].R ≈ 786 atol=1
     end
 end
 
