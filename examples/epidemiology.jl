@@ -32,7 +32,7 @@ Graph(sir)
 
 u0 = LVector(S=990.0, I=10.0, R=0.0)
 tspan = (0.0,40.0)
-β = LVector(inf=0.5/sum(u0), rec=0.25);
+β = LVector(inf=((u,t)->((3/sum(u))/(t+1))), rec=0.25);
 
 # Petri.jl provides interfaces to StochasticDiffEq.jl, DiffEqJump.jl, and
 # OrdinaryDiffEq.jl Here, we call the `JumpProblem` function that returns an
