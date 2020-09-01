@@ -11,11 +11,11 @@ import StochasticDiffEq: SDEProblem
 import DiffEqJump: JumpProblem
 
 funcindex!(list, key, f, vals...) = list[key] = f(list[key],vals...)
-valueat(x::Number, t) = x
-valueat(f::Function, t) = f(t)
+valueat(x::Number, u, t) = x
+valueat(f::Function, u, t) = try f(u,t) catch e f(t) end
 transitionrate(S, T, k, rate, t) = exp(reduce((x,y)->x+log(S[y] <= 0 ? 0 : S[y]),
                                        keys(first(T[k]));
-                                       init=log(valueat(rate[k],t))))
+                                       init=log(valueat(rate[k],S,t))))
 
 """ vectorfield(m::Model)
 
