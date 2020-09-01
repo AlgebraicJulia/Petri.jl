@@ -15,7 +15,7 @@ StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 
 [compat]
 AutoHashEquals = "^0.2.0"
-Catlab = "^0.7.0"
+Catlab = "^0.7"
 DiffEqBase = "^6"
 DiffEqJump = "^6"
 OrdinaryDiffEq = "^5"
