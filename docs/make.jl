@@ -40,6 +40,7 @@ makedocs(
     "Petri.jl" => "index.md",
     "Examples" => Any[
       "examples/epidemiology.md",
+      "examples/lotka-volterra.md",
     ],
     "Library Reference" => "api.md",
   ]
