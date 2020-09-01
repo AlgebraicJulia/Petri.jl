@@ -16,7 +16,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install graphviz ttf-dejavu
       - name: "Install Julia dependencies"
-        run: julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate(); Pkg.add("Catlab#compose_dependency");'
+        run: julia --project=docs -e 'using Pkg; Pkg.develop(PackageSpec(path=pwd())); Pkg.instantiate(); pkg"add Catlab#compose_dependency");'
       - name: "Build and deploy docs"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
