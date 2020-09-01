@@ -37,6 +37,15 @@ tspan = (0.0,40.0)
 # as is dependent on the current state of the system
 β = LVector(inf=((u,t)->((3/sum(u))/(t+1))), rec=0.25);
 
+# each transition rates can one of three options:
+#
+# - constant: `β = [.25]`
+#   - where the rate is specified by a value of type `Number`
+# - time dependent: `β = [t->((3/1000)/(t+1))]`
+#   - where `t` is the current time step
+# - state and time dependent: `β = [(u,t)->((3/sum(u))/(t+1))]`
+#   - where `u` is the current state of `u0` and `t` is the current time step
+
 # Petri.jl provides interfaces to StochasticDiffEq.jl, DiffEqJump.jl, and
 # OrdinaryDiffEq.jl Here, we call the `JumpProblem` function that returns an
 # DiffEqJump problem object that can be passed to the DiffEqJump solver which
