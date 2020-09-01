@@ -2,6 +2,7 @@
 
 [![Documentation](https://github.com/mehalter/Petri.jl/workflows/Documentation/badge.svg)](https://mehalter.github.io/Petri.jl/stable/)
 ![Tests](https://github.com/mehalter/Petri.jl/workflows/Tests/badge.svg)
+[![codecov](https://codecov.io/gh/mehalter/Petri.jl/branch/master/graph/badge.svg)](https://codecov.io/gh/mehalter/Petri.jl)
 [![DOI](https://zenodo.org/badge/203420191.svg)](https://zenodo.org/badge/latestdoi/203420191)
 
 
