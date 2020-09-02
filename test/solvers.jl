@@ -2,6 +2,7 @@ using Test
 using Petri
 using LabelledArrays
 using OrdinaryDiffEq
+using SteadyStateDiffEq
 using StochasticDiffEq
 using DiffEqJump
 using Random
@@ -24,7 +25,7 @@ end
         sir = Petri.Model([:S,:I,:R],[(LVector(S=1,I=1), LVector(I=2)),
                                       (LVector(I=1),     LVector(R=1))])
         u0 = LVector(S=990.0,I=10.0,R=0.0)
-        p = [0.5/sum(u0), 0.25]
+        p = [(u,t)->0.5/sum(u), 0.25]
         prob = ODEProblem(sir,u0,(0.0,40.0),p)
         sol = OrdinaryDiffEq.solve(prob,Tsit5())
         @test sum(sol[end]) ≈ 1000 atol=1
@@ -39,7 +40,7 @@ end
         sir = Petri.Model([:S,:I,:R],[(LVector(S=1,I=1), LVector(I=2)),
                                       (LVector(I=1),     LVector(R=1))])
         u0 = LVector(S=990.0,I=10.0,R=0.0)
-        p = [0.5/sum(u0), 0.25]
+        p = [(u,t)->(0.5/sum(u)), 0.25]
         prob,cb = SDEProblem(sir,u0,(0.0,40.0),p)
         sol = StochasticDiffEq.solve(prob,SRA1(),callback=cb)
         @test sum(sol[end]) ≈ 1000 atol=1
@@ -61,5 +62,20 @@ end
         @test sol[end].S == 263
         @test sol[end].I == 10
         @test sol[end].R == 727
+    end
+end
+
+@testset "Generation of SteadyState solutions" begin
+    @testset "SIR Steady State Solving" begin
+        sir = Petri.Model([:S,:I,:R],[(LVector(S=1,I=1), LVector(I=2)),
+                                      (LVector(I=1),     LVector(R=1))])
+        u0 = LVector(S=990.0,I=0.0,R=0.0)
+        p = [(u,t)->0.5/sum(u), 0.25]
+        prob = SteadyStateProblem(sir,u0,(0.0,40.0),p)
+        sol = OrdinaryDiffEq.solve(prob,DynamicSS(Tsit5()))
+        @test sum(sol.u) ≈ 990 atol=1e-2
+        @test sol.u.S ≈ 990 atol=1e-2
+        @test sol.u.I ≈ 0 atol=1e-2
+        @test sol.u.R ≈ 0 atol=1e-2
     end
 end
