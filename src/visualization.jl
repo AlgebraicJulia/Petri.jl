@@ -7,14 +7,10 @@ node_attrs  = Attributes(:shape=>"plain", :style=>"filled", :color=>"white")
 edge_attrs  = Attributes(:splines=>"splines")
 
 function edgify(δ, transition, reverse::Bool)
-    attr = Attributes()
-    return map(collect(keys(δ))) do k
-      weight = "$(δ[k])"
-      state = "$k"
-      attr = Attributes(:label=>weight, :labelfontsize=>"6")
-      return Edge(reverse ? ["T_$transition", "S_$state"] :
-                            ["S_$state", "T_$transition"], attr)
-    end
+    return [Edge(reverse ? ["T_$transition", "S_$k"] :
+                           ["S_$k", "T_$transition"],
+                 Attributes(:label=>"$(δ[k])", :labelfontsize=>"6"))
+             for k in collect(keys(δ)) if δ[k] != 0]
 end
 
 """

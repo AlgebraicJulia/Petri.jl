@@ -74,9 +74,10 @@ function SDEProblem(m::Model, u0, tspan, β)
     T = m.Δ
     ϕ = Dict()
     Spos = Dict(S[k]=>k for k in keys(S))
-    Tpos = Dict(keys(T)[k]=>k for k in keys(keys(T)))
+    T_keys = collect(keys(T))
+    Tpos = Dict(T_keys[k]=>k for k in keys(T_keys))
     nu = spzeros(Float64, length(S), length(T))
-    for k in keys(T)
+    for k in T_keys
       l,r = T[k]
       for i in keys(l)
         nu[Spos[i],Tpos[k]] -= l[i]
