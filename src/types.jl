@@ -13,6 +13,7 @@ represented by states and transition functions
 end
 
 Model(s::S, Δ) where S<:UnitRange = Model(collect(s), Δ)
+Model(s::S, Δ) where S<:Int = Model(1:s, Δ)
 
 """
     NullPetri

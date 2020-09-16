@@ -7,8 +7,11 @@ using LabelledArrays
                                  ([1],   [1])])
     sir_2 = Petri.Model(1:3,[([1,1], [2]),
                              ([1],   [1])])
+    sir_3 = Petri.Model(3,[([1,1], [2]),
+                           ([1],   [1])])
     @test typeof(Graph(sir_1)) == Graph
     @test sir_1 == sir_2
+    @test sir_1 == sir_3
 
     @test EmptyPetri(5) == Petri.Model(1:5, [])
 
