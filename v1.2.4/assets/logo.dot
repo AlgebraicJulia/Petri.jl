@@ -1,0 +1,12 @@
+digraph G {
+    graph [bgcolor="transparent", nodesep=".3", ranksep=".3"];
+    rankdir=TB
+    node[shape=square, style=filled]
+    t [label="", color="forestgreen", fillcolor="mediumseagreen"]
+    node[shape=circle, style=filled]
+    l [label="", color="brown3", fillcolor="indianred"]
+    r [label="", color="mediumorchid3", fillcolor="orchid3"]
+    {rank=same r, l}
+    t -> l [dir = back];
+    t -> r
+}
