@@ -59,9 +59,9 @@ end
         prob = JumpProblem(sir,u0,(0.0,40.0),p)
         sol = DiffEqJump.solve(prob,SSAStepper())
         @test sum(sol[end]) == 1000
-        @test sol[end].S == 263
-        @test sol[end].I == 10
-        @test sol[end].R == 727
+        @test sol[end].S == 236
+        @test sol[end].I == 45
+        @test sol[end].R == 719
     end
 end
 
