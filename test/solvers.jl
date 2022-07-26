@@ -4,7 +4,7 @@ using LabelledArrays
 using OrdinaryDiffEq
 using SteadyStateDiffEq
 using StochasticDiffEq
-using DiffEqJump
+using JumpProcesses
 using Random
 
 Random.seed!(1234);
@@ -57,7 +57,7 @@ end
         u0 = LVector(S=990.0,I=10.0,R=0.0)
         p = [0.5/sum(u0), 0.25]
         prob = JumpProblem(sir,u0,(0.0,40.0),p)
-        sol = DiffEqJump.solve(prob,SSAStepper())
+        sol = JumpProcesses.solve(prob,SSAStepper())
         @test sum(sol[end]) == 1000
         @test sol[end].S == 236
         @test sol[end].I == 45

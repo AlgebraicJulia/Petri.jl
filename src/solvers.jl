@@ -2,13 +2,13 @@ using DiffEqBase
 using OrdinaryDiffEq
 using SteadyStateDiffEq
 using StochasticDiffEq
-using DiffEqJump
+using JumpProcesses
 using SparseArrays
 
 import OrdinaryDiffEq: ODEProblem
 import SteadyStateDiffEq: SteadyStateProblem
 import StochasticDiffEq: SDEProblem
-import DiffEqJump: JumpProblem
+import JumpProcesses: JumpProblem
 
 funcindex!(list, key, f, vals...) = list[key] = f(list[key],vals...)
 valueat(x::Number, u, t) = x
@@ -125,7 +125,7 @@ end
 
 """ JumpProblem(m::Model, u0, tspan, β)
 
-Generate an DiffEqJump JumpProblem
+Generate an JumpProcesses JumpProblem
 """
 function JumpProblem(m::Model, u0, tspan, β)
   T = m.Δ

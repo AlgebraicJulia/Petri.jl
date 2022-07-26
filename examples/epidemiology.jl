@@ -5,7 +5,7 @@
 using Petri
 using LabelledArrays
 using Plots
-using DiffEqJump
+using JumpProcesses
 using StochasticDiffEq
 using OrdinaryDiffEq
 
@@ -46,13 +46,13 @@ tspan = (0.0,40.0)
 # - state and time dependent: `β = [(u,t)->((3/sum(u))/(t+1))]`
 #   - where `u` is the current state of `u0` and `t` is the current time step
 
-# Petri.jl provides interfaces to StochasticDiffEq.jl, DiffEqJump.jl, and
+# Petri.jl provides interfaces to StochasticDiffEq.jl, JumpProcesses.jl, and
 # OrdinaryDiffEq.jl Here, we call the `JumpProblem` function that returns an
-# DiffEqJump problem object that can be passed to the DiffEqJump solver which
+# JumpProcesses problem object that can be passed to the JumpProcesses solver which
 # can then be plotted and visualized
 
 prob = JumpProblem(sir, u0, tspan, β)
-sol = DiffEqJump.solve(prob,SSAStepper())
+sol = JumpProcesses.solve(prob,SSAStepper())
 
 plot(sol)
 
