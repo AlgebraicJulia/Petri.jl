@@ -1,4 +1,4 @@
-using AutoHashEquals
+using StructEquality
 
 """
     Model{S,D}
@@ -7,7 +7,7 @@ Structure for representing the petri net model
 
 represented by states and transition functions
 """
-@auto_hash_equals struct Model{S,D}
+@struct_hash_equal struct Model{S,D}
   S::S  # states
   Δ::D  # transition function
 end
