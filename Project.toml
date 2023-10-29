@@ -14,7 +14,7 @@ StochasticDiffEq = "789caeaf-c7a9-5a7d-9973-96adeb23e2a0"
 StructEquality = "6ec83bb0-ed9f-11e9-3b4c-2b04cb4e219c"
 
 [compat]
-Catlab = "0.7.4,0.8,0.9,0.10,0.11,0.12,0.13,0.14"
+Catlab = "0.7.4,0.8,0.9,0.10,0.11,0.12,0.13,0.14, 0.16"
 DiffEqBase = "^6"
 JumpProcesses = "^9"
 OrdinaryDiffEq = "5,6"
